@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntelliBusiness - Transform Business Operations with AI</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="spinner"></div>
+        <p>Loading IntelliBusiness...</p>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav id="navbar" class="navbar navbar-expand-lg navbar-light sticky-top navbar-custom">
+        <div class="container-fluid container-lg">
+            <!-- Logo -->
+            <a class="navbar-brand" href="#home">
+                <i class="fas fa-brain"></i> IntelliBusiness
+            </a>
+
+            <!-- Hamburger Menu Button -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navigation Links -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom active" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom" href="#how-it-works">How It Works</a>
+                    </li>
+                
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom" href="#faq">FAQ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom" href="#contact">Contact</a>
+                    </li>
+                </ul>
+                <div class="navbar-buttons ms-lg-3 mt-3 mt-lg-0">
+                    <button class="btn-dark-mode me-2" id="darkModeToggle" title="Toggle Dark Mode">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <a href="#" class="btn btn-outline-primary me-2 btn-custom">Login</a>
+                    <a href="#contact" class="btn btn-primary btn-custom">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="container-lg">
+            <div class="row align-items-center min-vh-100">
+                <!-- Left Content -->
+                <div class="col-lg-6 hero-content fade-in">
+                    <h1 class="hero-title">Transform Business Operations with AI</h1>
+                    <p class="hero-subtitle">Upload documents, search company knowledge, generate emails, create reports, and automate workflows from one intelligent platform.</p>
+                    <div class="hero-buttons">
+                        <a href="#contact" class="btn btn-primary btn-lg btn-custom btn-gradient">Get Started</a>
+                        <button class="btn btn-outline-primary btn-lg btn-custom" id="learnMoreBtn">Learn More</button>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <h3>10K+</h3>
+                            <p>Active Users</p>
+                        </div>
+                        <div class="stat">
+                            <h3>500K+</h3>
+                            <p>Documents Processed</p>
+                        </div>
+                        <div class="stat">
+                            <h3>99.9%</h3>
+                            <p>Uptime</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Content - Dashboard Illustration -->
+                <div class="col-lg-6 hero-illustration">
+                    <div class="dashboard-mockup">
+                        <div class="mockup-header">
+                            <div class="mockup-dot"></div>
+                            <div class="mockup-dot"></div>
+                            <div class="mockup-dot"></div>
+                        </div>
+                        <div class="mockup-content">
+                            <div class="mockup-chart">
+                                <div class="chart-bar" style="height: 60%;"></div>
+                                <div class="chart-bar" style="height: 75%;"></div>
+                                <div class="chart-bar" style="height: 85%;"></div>
+                                <div class="chart-bar" style="height: 70%;"></div>
+                            </div>
+                            <div class="mockup-text">
+                                <div class="text-line" style="width: 90%;"></div>
+                                <div class="text-line" style="width: 70%;"></div>
+                                <div class="text-line" style="width: 85%;"></div>
+                            </div>
+                            <div class="floating-card">
+                                <i class="fas fa-check-circle"></i> Analysis Complete
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="container-lg">
+            <div class="section-header text-center">
+                <h2>Powerful Features for Modern Business</h2>
+                <p>Everything you need to manage your business efficiently</p>
+            </div>
+            <div class="row g-4">
+                <!-- Feature 1 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                        <h3>AI Document Assistant</h3>
+                        <p>Upload and analyze documents with intelligent AI-powered insights and automatic extraction.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h3>Smart Email Generator</h3>
+                        <p>Generate professional emails automatically with AI assistance tailored to your context.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Business Analytics</h3>
+                        <p>Get real-time analytics and insights to make data-driven decisions for your business.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3>Workflow Automation</h3>
+                        <p>Automate repetitive tasks and workflows to save time and improve efficiency.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h3>Knowledge Search</h3>
+                        <p>Instantly search through your company knowledge base with intelligent semantic search.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Secure Workspace</h3>
+                        <p>Enterprise-grade security with end-to-end encryption and compliance standards.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="how-it-works-section">
+        <div class="container-lg">
+            <div class="section-header text-center">
+                <h2>How IntelliBusiness Works</h2>
+                <p>Four simple steps to transform your business</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="steps-container">
+                        <!-- Step 1 -->
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <h3>Upload Documents</h3>
+                            <p>Start by uploading your business documents, files, and data to the platform.</p>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div class="step-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h3>AI Understands Your Data</h3>
+                            <p>Our AI analyzes and understands the context of your business data.</p>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div class="step-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <h3>Ask Questions</h3>
+                            <p>Query your data naturally in plain English to get instant answers.</p>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div class="step-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+
+                        <!-- Step 4 -->
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <div class="step-icon">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <h3>Receive Intelligent Results</h3>
+                            <p>Get actionable insights and results in seconds with full transparency.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section id="benefits" class="benefits-section">
+        <div class="container-lg">
+            <div class="section-header text-center">
+                <h2>Why Choose IntelliBusiness?</h2>
+                <p>Transform the way you work</p>
+            </div>
+            <div class="row g-4">
+                <!-- Benefit 1 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-hourglass-end"></i>
+                        </div>
+                        <h3>Save Time</h3>
+                        <p>Automate repetitive tasks and focus on what matters most to grow your business.</p>
+                    </div>
+                </div>
+
+                <!-- Benefit 2 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <h3>Reduce Manual Work</h3>
+                        <p>Eliminate manual data entry and processing with intelligent automation systems.</p>
+                    </div>
+                </div>
+
+                <!-- Benefit 3 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h3>Increase Productivity</h3>
+                        <p>Boost team productivity with smart workflows and collaborative tools.</p>
+                    </div>
+                </div>
+
+                <!-- Benefit 4 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <h3>Improve Decision Making</h3>
+                        <p>Make better decisions with data-driven insights and real-time analytics.</p>
+                    </div>
+                </div>
+
+                <!-- Benefit 5 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <h3>Secure AI</h3>
+                        <p>Enterprise-grade security with advanced encryption and compliance standards.</p>
+                    </div>
+                </div>
+
+                <!-- Benefit 6 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Easy Collaboration</h3>
+                        <p>Collaborate seamlessly with your team across departments in real-time.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq-section">
+        <div class="container-lg">
+            <div class="section-header text-center">
+                <h2>Frequently Asked Questions</h2>
+                <p>Find answers to common questions</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="accordion" id="faqAccordion">
+                        <!-- FAQ 1 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    <i class="fas fa-question-circle"></i> What is IntelliBusiness?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    IntelliBusiness is an AI-powered platform that helps businesses streamline their operations through intelligent document processing, email generation, analytics, and workflow automation.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 2 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    <i class="fas fa-question-circle"></i> How secure is my data?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    We use enterprise-grade encryption, regular security audits, and comply with international security standards including GDPR and SOC 2. Your data is your property.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 3 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    <i class="fas fa-question-circle"></i> Can I integrate IntelliBusiness with my tools?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Yes! We offer integrations with popular tools like Slack, Microsoft Teams, Zapier, and more. Enterprise users can request custom integrations.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 4 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                    <i class="fas fa-question-circle"></i> What file formats are supported?
+                                </button>
+                            </h2>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    We support PDF, Word documents, Excel spreadsheets, PowerPoint presentations, and plain text files. More formats are added regularly.
+                                </div>
+                            </div>
+                        </div>
+
+                        
+
+                        <!-- FAQ 6 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
+                                    <i class="fas fa-question-circle"></i> What kind of support do you offer?
+                                </button>
+                            </h2>
+                            <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    We offer 24/7 email support for all plans, priority support for Professional plans, and dedicated account managers for Enterprise customers.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container-lg">
+            <div class="section-header text-center">
+                <h2>Get In Touch</h2>
+                <p>We'd love to hear from you. Send us a message!</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <form id="contactForm" class="contact-form">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="form-group">
+                                    <label for="name" class="form-label">Full Name *</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                    <small class="error-message"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="form-group">
+                                    <label for="email" class="form-label">Email Address *</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                    <small class="error-message"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="form-group">
+                                    <label for="company" class="form-label">Company *</label>
+                                    <input type="text" class="form-control" id="company" name="company" required>
+                                    <small class="error-message"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="form-group">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone">
+                                </div>
+                            </div>
+                            <div class="col-12 mb-4">
+                                <div class="form-group">
+                                    <label for="message" class="form-label">Message *</label>
+                                    <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                                    <small class="error-message"></small>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary btn-lg w-100 btn-custom btn-gradient">Send Message</button>
+                                <div class="success-message" style="display: none; margin-top: 1.5rem;">
+                                    <i class="fas fa-check-circle"></i> Thank you! Your message has been sent successfully.
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container-lg">
+            <div class="row">
+                <!-- Footer Column 1 -->
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5><i class="fas fa-brain"></i> IntelliBusiness</h5>
+                    <p>Transform your business operations with AI-powered intelligence.</p>
+                    <div class="social-links">
+                        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+
+                <!-- Footer Column 2 -->
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5>Product</h5>
+                    <ul class="footer-links">
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#">Updates</a></li>
+                    </ul>
+                </div>
+
+                <!-- Footer Column 3 -->
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5>Company</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press</a></li>
+                    </ul>
+                </div>
+
+                <!-- Footer Column 4 -->
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5>Contact</h5>
+                    <ul class="footer-links">
+                        <li><a href="mailto:intellibusiness@gmail.com"><i class="fas fa-envelope"></i> intellibusiness@gmail.com</a></li>
+                        <li><a href="tel:8220335156"><i class="fas fa-phone"></i> 8220335156 </a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>&copy; 2024 IntelliBusiness. All rights reserved.</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <a href="#">Privacy Policy</a> • <a href="#">Terms of Service</a> • <a href="#">Cookie Settings</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="backToTopBtn" class="back-to-top" title="Back to Top">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="js/script.js"></script>
+</body>
+</html>
+
