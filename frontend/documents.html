@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documents - IntelliBusiness</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/documents.css">
+</head>
+<body class="dashboard-body">
+    <aside class="sidebar-wrapper">
+        <a href="dashboard.html" class="sidebar-brand">
+            <div class="sidebar-brand-logo">
+                <i class="fas fa-brain"></i>
+            </div>
+            <span class="sidebar-brand-text">IntelliBusiness</span>
+        </a>
+
+        <div class="sidebar-menu">
+            <div class="sidebar-section-label">Main Menu</div>
+
+            <a href="dashboard.html" class="sidebar-nav-item">
+                <i class="fas fa-chart-pie"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="documents.html" class="sidebar-nav-item active">
+                <i class="fas fa-folder-open"></i>
+                <span>Documents</span>
+            </a>
+
+            <a href="#" class="sidebar-nav-item" onclick="alert('AI Assistant chat is coming soon!'); return false;">
+                <i class="fas fa-robot"></i>
+                <span>AI Assistant</span>
+                <span class="badge-coming-soon">Soon</span>
+            </a>
+
+            <a href="#" class="sidebar-nav-item" onclick="alert('Email Generator is coming soon!'); return false;">
+                <i class="fas fa-paper-plane"></i>
+                <span>Email Generator</span>
+                <span class="badge-coming-soon">Soon</span>
+            </a>
+
+            <a href="#" class="sidebar-nav-item" onclick="alert('Analytics is coming soon!'); return false;">
+                <i class="fas fa-chart-line"></i>
+                <span>Analytics</span>
+                <span class="badge-coming-soon">Soon</span>
+            </a>
+
+            <a href="#" class="sidebar-nav-item" onclick="alert('Workflow automation is coming soon!'); return false;">
+                <i class="fas fa-network-wired"></i>
+                <span>Workflows</span>
+                <span class="badge-coming-soon">Soon</span>
+            </a>
+
+            <a href="#" class="sidebar-nav-item" onclick="alert('History is coming soon!'); return false;">
+                <i class="fas fa-history"></i>
+                <span>History</span>
+                <span class="badge-coming-soon">Soon</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="#" class="sidebar-nav-item mb-1" data-bs-toggle="modal" data-bs-target="#profileModal">
+                <i class="fas fa-user-circle"></i>
+                <span>My Profile</span>
+            </a>
+            <a href="#" class="sidebar-nav-item text-danger" id="btnLogoutSidebar">
+                <i class="fas fa-sign-out-alt text-danger"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="topbar-wrapper">
+            <div class="d-flex align-items-center">
+                <button class="mobile-toggle-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="topbar-search">
+                    <i class="fas fa-search"></i>
+                    <input type="search" id="documentSearchInput" placeholder="Search documents..." aria-label="Search documents">
+                </div>
+            </div>
+            <div class="topbar-actions">
+                <button class="btn btn-primary rounded-pill px-3" id="btnUploadDocumentHeader">
+                    <i class="fas fa-plus me-2"></i> + Upload Document
+                </button>
+            </div>
+        </header>
+
+        <main class="dashboard-content documents-content">
+            <div class="documents-hero card border-0 shadow-sm mb-4">
+                <div class="card-body p-4 p-md-5">
+                    <div class="row align-items-center">
+                        <div class="col-lg-8">
+                            <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill mb-3 fw-semibold">
+                                <i class="fas fa-file-lines me-2"></i> Document Intelligence
+                            </span>
+                            <h1 class="documents-title mb-2">Documents</h1>
+                            <p class="documents-subtitle mb-0">Manage and organize your business documents.</p>
+                        </div>
+                        <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                            <button class="btn btn-primary rounded-pill px-4 shadow-sm" id="btnUploadDocumentHero">
+                                <i class="fas fa-cloud-upload-alt me-2"></i> + Upload Document
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="documents-toolbar mb-4">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="input-group document-search-wrap">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" class="form-control" id="documentsSearchInput" placeholder="Search Documents">
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-lg-2">
+                        <select class="form-select" id="documentsFilterSelect">
+                            <option value="all">Filter</option>
+                            <option value="pdf">PDF</option>
+                            <option value="docx">DOCX</option>
+                            <option value="txt">TXT</option>
+                            <option value="xlsx">XLSX</option>
+                            <option value="pptx">PPTX</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 col-lg-2">
+                        <select class="form-select" id="documentsSortSelect">
+                            <option value="newest">Newest</option>
+                            <option value="oldest">Oldest</option>
+                            <option value="name">Name</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="stat-card document-stat-card">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="stat-icon-wrapper stat-icon-blue"><i class="fas fa-file-alt"></i></div>
+                        </div>
+                        <div class="stat-value" id="totalDocumentsStat">0</div>
+                        <div class="stat-label">Total Documents</div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="stat-card document-stat-card">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="stat-icon-wrapper stat-icon-purple"><i class="fas fa-spinner"></i></div>
+                        </div>
+                        <div class="stat-value" id="processingDocumentsStat">0</div>
+                        <div class="stat-label">Processing</div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="stat-card document-stat-card">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="stat-icon-wrapper stat-icon-emerald"><i class="fas fa-check-circle"></i></div>
+                        </div>
+                        <div class="stat-value" id="completedDocumentsStat">0</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="stat-card document-stat-card">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="stat-icon-wrapper stat-icon-amber"><i class="fas fa-exclamation-circle"></i></div>
+                        </div>
+                        <div class="stat-value" id="failedDocumentsStat">0</div>
+                        <div class="stat-label">Failed</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="documents-upload-panel card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="upload-dropzone" id="uploadDropzone" tabindex="0">
+                        <input type="file" id="documentFileInput" multiple accept=".pdf,.docx,.pptx,.xlsx,.txt" hidden>
+                        <div class="upload-dropzone-content text-center">
+                            <div class="upload-icon mb-3"><i class="fas fa-cloud-upload-alt"></i></div>
+                            <h4 class="mb-2">Upload your business documents</h4>
+                            <p class="mb-3">Drag & drop files here or browse</p>
+                            <button type="button" class="btn btn-primary rounded-pill px-4" id="btnBrowseFiles">
+                                <i class="fas fa-folder-open me-2"></i> Browse Files
+                            </button>
+                            <div class="upload-hint mt-3">PDF, DOCX, PPTX, XLSX, TXT • Max 10 MB each</div>
+                        </div>
+                    </div>
+                    <div class="selected-files mt-3" id="selectedFilesContainer"></div>
+                </div>
+            </div>
+
+            <div class="documents-table card border-0 shadow-sm">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0 documents-table-main">
+                            <thead>
+                                <tr>
+                                    <th>Document</th>
+                                    <th>Type</th>
+                                    <th>Size</th>
+                                    <th>Uploaded</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="documentsTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-5">
+                                        <div class="spinner-border text-primary spinner-border-sm me-2" role="status"></div>
+                                        Loading documents...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-dark" id="profileModalLabel">My Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="text-center mb-3">
+                        <div class="avatar-circle mx-auto" id="profileModalAvatar">IB</div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-12"><strong>Name:</strong> <span id="profileModalName">-</span></div>
+                        <div class="col-12"><strong>Company:</strong> <span id="profileModalCompany">-</span></div>
+                        <div class="col-12"><strong>Email:</strong> <span id="profileModalEmail">-</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="documentDetailsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-dark">Document Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div id="documentDetailContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="documentPreviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-dark">Document Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div id="documentPreviewContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/documents.js"></script>
+</body>
+</html>

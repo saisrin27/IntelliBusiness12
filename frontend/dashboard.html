@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - IntelliBusiness SaaS</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="dashboard-body">
+
+    <!-- ============================================
+         1. SIDEBAR NAVIGATION (DESKTOP)
+         ============================================ -->
+    <aside class="sidebar-wrapper">
+        <a href="dashboard.html" class="sidebar-brand">
+            <div class="sidebar-brand-logo">
+                <i class="fas fa-brain"></i>
+            </div>
+            <span class="sidebar-brand-text">IntelliBusiness</span>
+        </a>
+
+        <div class="sidebar-menu">
+            <div class="sidebar-section-label">Main Menu</div>
+            
+            <a href="dashboard.html" class="sidebar-nav-item active">
+                <i class="fas fa-chart-pie"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <a href="documents.html" class="sidebar-nav-item">
+                <i class="fas fa-folder-open"></i>
+                <span>Documents</span>
+            </a>
+
+            <a href="#" class="sidebar-nav-item" onclick="alert('AI Assistant Chat module is coming soon!'); return false;">
+                <i class="fas fa-robot"></i>
+                <span>AI Assistant</span>
+                <span class="badge-coming-soon">Soon</span>
+            </a>
+
+            <a href="#" class="sidebar-nav-item" onclick="alert('Email Generator module is coming soon!'); return false;">
+                <i class="fas fa-paper-plane"></i>
+                <span>Email Generator</span>
+                <span class="badge-coming-soon">Soon</span>
+            </a>
+
+            <a href="#" class="sidebar-nav-item" onclick="alert('Analytics & Insights module is coming soon!'); return false;">
+                <i class="fas fa-chart-line"></i>
+                <span>Analytics</span>
+                <span class="badge-coming-soon">Soon</span>
+            </a>
+
+            <a href="#" class="sidebar-nav-item" onclick="alert('Workflows automation is coming soon!'); return false;">
+                <i class="fas fa-network-wired"></i>
+                <span>Workflows</span>
+                <span class="badge-coming-soon">Soon</span>
+            </a>
+
+            <a href="#" class="sidebar-nav-item" onclick="alert('Activity History is coming soon!'); return false;">
+                <i class="fas fa-history"></i>
+                <span>History</span>
+                <span class="badge-coming-soon">Soon</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="#" class="sidebar-nav-item mb-1" onclick="alert('Workspace Settings are coming soon!'); return false;">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+                <span class="badge-coming-soon">Soon</span>
+            </a>
+
+            <a href="#" class="sidebar-nav-item mb-1" data-bs-toggle="modal" data-bs-target="#profileModal">
+                <i class="fas fa-user-circle"></i>
+                <span>My Profile</span>
+            </a>
+
+            <a href="#" class="sidebar-nav-item text-danger" id="btnLogoutSidebar">
+                <i class="fas fa-sign-out-alt text-danger"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- ============================================
+         2. MOBILE OFFCANVAS SIDEBAR DRAWER
+         ============================================ -->
+    <div class="offcanvas offcanvas-start offcanvas-sidebar" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel">
+        <div class="offcanvas-header border-bottom">
+            <a href="dashboard.html" class="d-flex align-items-center text-decoration-none">
+                <div class="sidebar-brand-logo me-2">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <span class="fw-bold fs-5 text-dark">IntelliBusiness</span>
+            </a>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-0 d-flex flex-column">
+            <div class="sidebar-menu">
+                <a href="dashboard.html" class="sidebar-nav-item active">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="documents.html" class="sidebar-nav-item">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Documents</span>
+                </a>
+                <a href="#" class="sidebar-nav-item" onclick="alert('AI Assistant Chat coming soon!'); return false;">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Assistant</span>
+                    <span class="badge-coming-soon">Soon</span>
+                </a>
+                <a href="#" class="sidebar-nav-item" onclick="alert('Email Generator coming soon!'); return false;">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Email Generator</span>
+                    <span class="badge-coming-soon">Soon</span>
+                </a>
+                <a href="#" class="sidebar-nav-item" onclick="alert('Analytics coming soon!'); return false;">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                    <span class="badge-coming-soon">Soon</span>
+                </a>
+                <a href="#" class="sidebar-nav-item" onclick="alert('Workflows coming soon!'); return false;">
+                    <i class="fas fa-network-wired"></i>
+                    <span>Workflows</span>
+                    <span class="badge-coming-soon">Soon</span>
+                </a>
+            </div>
+
+            <div class="sidebar-footer">
+                <a href="#" class="sidebar-nav-item mb-1" data-bs-toggle="modal" data-bs-target="#profileModal">
+                    <i class="fas fa-user-circle"></i>
+                    <span>My Profile</span>
+                </a>
+                <a href="#" class="sidebar-nav-item text-danger" id="btnLogoutMobile">
+                    <i class="fas fa-sign-out-alt text-danger"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         3. MAIN WRAPPER
+         ============================================ -->
+    <div class="main-wrapper">
+
+        <!-- Top Navigation Bar -->
+        <header class="topbar-wrapper">
+            <div class="d-flex align-items-center">
+                <button class="mobile-toggle-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="topbar-search">
+                    <i class="fas fa-search"></i>
+                    <input type="search" placeholder="Search workspace, documents..." aria-label="Search">
+                </div>
+            </div>
+
+            <div class="topbar-actions">
+                <!-- Notifications Dropdown -->
+                <div class="dropdown">
+                    <button class="icon-btn" type="button" id="notificationDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="far fa-bell"></i>
+                        <span class="badge-dot" id="notificationBadgeDot"></span>
+                    </button>
+
+                    <div class="dropdown-menu dropdown-menu-end dashboard-dropdown notification-dropdown" aria-labelledby="notificationDropdownBtn">
+                        <div class="notification-header">
+                            <span class="fw-bold text-dark fs-6">Notifications</span>
+                            <span class="badge bg-primary-subtle text-primary rounded-pill" id="notificationCountBadge">2 Unread</span>
+                        </div>
+
+                        <div class="notification-item">
+                            <div class="notification-icon bg-primary-subtle text-primary">
+                                <i class="fas fa-sparkles"></i>
+                            </div>
+                            <div>
+                                <div class="fw-semibold text-dark small">Welcome to IntelliBusiness!</div>
+                                <div class="text-muted small">Your AI workspace is ready. Explore documents and AI features.</div>
+                                <div class="text-muted extra-small mt-1" style="font-size: 0.7rem;">Just now</div>
+                            </div>
+                        </div>
+
+                        <div class="notification-item">
+                            <div class="notification-icon bg-success-subtle text-success">
+                                <i class="fas fa-shield-check"></i>
+                            </div>
+                            <div>
+                                <div class="fw-semibold text-dark small">System Operational</div>
+                                <div class="text-muted small">All backend microservices & JWT auth are connected cleanly.</div>
+                                <div class="text-muted extra-small mt-1" style="font-size: 0.7rem;">10m ago</div>
+                            </div>
+                        </div>
+
+                        <div class="p-2 text-center border-top">
+                            <a href="#" class="small text-primary text-decoration-none fw-medium" id="btnMarkNotificationsRead">Mark all as read</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Profile Dropdown -->
+                <div class="dropdown">
+                    <div class="user-avatar-btn" id="userProfileDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="avatar-circle" id="topbarUserAvatar">IB</div>
+                        <div class="user-info-text d-none d-md-block">
+                            <div class="user-info-name" id="topbarUserName">Loading...</div>
+                            <div class="user-info-role" id="topbarUserRole">Company</div>
+                        </div>
+                        <i class="fas fa-chevron-down text-muted small ms-1"></i>
+                    </div>
+
+                    <ul class="dropdown-menu dropdown-menu-end dashboard-dropdown mt-2" aria-labelledby="userProfileDropdownBtn">
+                        <li class="px-3 py-2 border-bottom mb-1">
+                            <div class="fw-bold text-dark" id="dropdownUserFullName">Account</div>
+                            <div class="text-muted small">Authenticated Session</div>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
+                                <i class="fas fa-id-card"></i> My Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#" onclick="alert('Settings are coming soon!'); return false;">
+                                <i class="fas fa-sliders-h"></i> Settings
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="#" id="btnLogoutTopbar">
+                                <i class="fas fa-sign-out-alt text-danger"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <!-- ============================================
+             4. DASHBOARD CONTENT AREA
+             ============================================ -->
+        <main class="dashboard-content">
+
+            <!-- Welcome Banner Card -->
+            <div class="card welcome-banner-card mb-4">
+                <div class="card-body p-4 p-md-5">
+                    <div class="row align-items-center">
+                        <div class="col-lg-8">
+                            <span class="badge bg-white text-primary px-3 py-2 rounded-pill mb-3 fw-semibold shadow-sm">
+                                <i class="fas fa-crown me-1 text-warning"></i> Enterprise Workspace
+                            </span>
+                            <h2 class="display-6 fw-bold mb-2">
+                                <span id="greetingText">Good morning</span>, <span id="welcomeUserName">User</span>! 👋
+                            </h2>
+                            <p class="lead mb-0 opacity-90 fs-6">
+                                Here's what's happening with your business workspace today. Manage documents, interact with AI models, and automate workflows.
+                            </p>
+                        </div>
+                        <div class="col-lg-4 text-start text-lg-end mt-4 mt-lg-0">
+                            <a href="documents.html" class="btn btn-light btn-lg rounded-pill px-4 shadow-sm text-primary fw-semibold">
+                                <i class="fas fa-cloud-upload-alt me-2"></i> Upload Document
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards Row (4 Cards) -->
+            <div class="row g-3 mb-4">
+                <!-- 1. Documents -->
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="stat-card">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="stat-icon-wrapper stat-icon-blue">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <span class="stat-badge bg-primary-subtle text-primary">+12% this week</span>
+                        </div>
+                        <div class="stat-value" id="statDocuments">0</div>
+                        <div class="stat-label">Documents Uploaded</div>
+                    </div>
+                </div>
+
+                <!-- 2. AI Tasks -->
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="stat-card">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="stat-icon-wrapper stat-icon-purple">
+                                <i class="fas fa-microchip"></i>
+                            </div>
+                            <span class="stat-badge bg-purple-subtle text-purple" style="background:#F3E8FF; color:#7C3AED;">+24% vs last week</span>
+                        </div>
+                        <div class="stat-value" id="statAiTasks">0</div>
+                        <div class="stat-label">AI Tasks Executed</div>
+                    </div>
+                </div>
+
+                <!-- 3. Emails Generated -->
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="stat-card">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="stat-icon-wrapper stat-icon-emerald">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <span class="stat-badge bg-success-subtle text-success">+8 new today</span>
+                        </div>
+                        <div class="stat-value" id="statEmails">0</div>
+                        <div class="stat-label">Emails Generated</div>
+                    </div>
+                </div>
+
+                <!-- 4. Saved Workflows -->
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="stat-card">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="stat-icon-wrapper stat-icon-amber">
+                                <i class="fas fa-diagram-project"></i>
+                            </div>
+                            <span class="stat-badge bg-warning-subtle text-warning">Active automation</span>
+                        </div>
+                        <div class="stat-value" id="statWorkflows">0</div>
+                        <div class="stat-label">Saved Workflows</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Productivity Chart & Getting Started Checklist -->
+            <div class="row g-4 mb-4">
+                <!-- Productivity Chart Card -->
+                <div class="col-lg-8">
+                    <div class="dashboard-card h-100 mb-0">
+                        <div class="dashboard-card-header">
+                            <h5 class="dashboard-card-title">
+                                <i class="fas fa-chart-area text-primary"></i> Productivity Analytics
+                            </h5>
+                            <span class="badge bg-light text-secondary border">AI Usage This Week</span>
+                        </div>
+                        <div class="dashboard-card-body">
+                            <div style="height: 300px; position: relative;">
+                                <canvas id="productivityChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Getting Started Card -->
+                <div class="col-lg-4">
+                    <div class="dashboard-card h-100 mb-0">
+                        <div class="dashboard-card-header">
+                            <h5 class="dashboard-card-title">
+                                <i class="fas fa-tasks text-purple" style="color: #7C3AED;"></i> Getting Started
+                            </h5>
+                        </div>
+                        <div class="dashboard-card-body">
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="small text-muted fw-medium">Workspace Setup</span>
+                                    <span class="small fw-semibold text-primary" id="checklistProgressText">0 of 4 completed (0%)</span>
+                                </div>
+                                <div class="progress" style="height: 8px; border-radius: 10px; background-color: #E2E8F0;">
+                                    <div class="progress-bar bg-primary" id="checklistProgressBar" role="progressbar" style="width: 0%; border-radius: 10px;"></div>
+                                </div>
+                            </div>
+
+                            <div class="checklist-list">
+                                <div class="checklist-item">
+                                    <input type="checkbox" class="checklist-checkbox" id="chk1">
+                                    <label class="checklist-label" for="chk1">Upload your first document</label>
+                                </div>
+
+                                <div class="checklist-item">
+                                    <input type="checkbox" class="checklist-checkbox" id="chk2">
+                                    <label class="checklist-label" for="chk2">Ask the AI Assistant a question</label>
+                                </div>
+
+                                <div class="checklist-item">
+                                    <input type="checkbox" class="checklist-checkbox" id="chk3">
+                                    <label class="checklist-label" for="chk3">Generate your first email</label>
+                                </div>
+
+                                <div class="checklist-item">
+                                    <input type="checkbox" class="checklist-checkbox" id="chk4">
+                                    <label class="checklist-label" for="chk4">Create your first workflow</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions Grid -->
+            <div class="dashboard-card mb-4">
+                <div class="dashboard-card-header">
+                    <h5 class="dashboard-card-title">
+                        <i class="fas fa-bolt text-warning"></i> Quick Actions
+                    </h5>
+                    <span class="small text-muted">Accelerate your workflow</span>
+                </div>
+                <div class="dashboard-card-body">
+                    <div class="row g-3">
+                        <!-- Action 1 -->
+                        <div class="col-12 col-sm-6 col-md-4 col-xl">
+                            <div class="quick-action-card">
+                                <div class="quick-action-icon">
+                                    <i class="fas fa-file-upload"></i>
+                                </div>
+                                <div class="quick-action-title">Upload Document</div>
+                                <div class="quick-action-desc">Upload PDF, DOCX, or images for instant AI summary & insights.</div>
+                                <a href="documents.html" class="btn btn-outline-primary btn-sm rounded-pill w-100">
+                                    Upload Document
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Action 2 -->
+                        <div class="col-12 col-sm-6 col-md-4 col-xl">
+                            <div class="quick-action-card">
+                                <div class="quick-action-icon">
+                                    <i class="fas fa-comments"></i>
+                                </div>
+                                <div class="quick-action-title">Ask AI</div>
+                                <div class="quick-action-desc">Chat with the IntelliBusiness Assistant for data analysis.</div>
+                                <button class="btn btn-outline-primary btn-sm rounded-pill w-100" onclick="alert('AI Chat coming soon!')">
+                                    Launch Chat <span class="badge-coming-soon ms-1">Soon</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Action 3 -->
+                        <div class="col-12 col-sm-6 col-md-4 col-xl">
+                            <div class="quick-action-card">
+                                <div class="quick-action-icon">
+                                    <i class="fas fa-paper-plane"></i>
+                                </div>
+                                <div class="quick-action-title">Generate Email</div>
+                                <div class="quick-action-desc">Draft executive emails, customer follow-ups & business letters.</div>
+                                <button class="btn btn-outline-primary btn-sm rounded-pill w-100" onclick="alert('Email Generator coming soon!')">
+                                    Draft Email <span class="badge-coming-soon ms-1">Soon</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Action 4 -->
+                        <div class="col-12 col-sm-6 col-md-4 col-xl">
+                            <div class="quick-action-card">
+                                <div class="quick-action-icon">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                <div class="quick-action-title">Analyze Data</div>
+                                <div class="quick-action-desc">Generate statistical reports and trend graphs automatically.</div>
+                                <button class="btn btn-outline-primary btn-sm rounded-pill w-100" onclick="alert('Data Analytics coming soon!')">
+                                    Analyze <span class="badge-coming-soon ms-1">Soon</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Action 5 -->
+                        <div class="col-12 col-sm-6 col-md-4 col-xl">
+                            <div class="quick-action-card">
+                                <div class="quick-action-icon">
+                                    <i class="fas fa-route"></i>
+                                </div>
+                                <div class="quick-action-title">Create Workflow</div>
+                                <div class="quick-action-desc">Automate multi-step business routines without coding.</div>
+                                <button class="btn btn-outline-primary btn-sm rounded-pill w-100" onclick="alert('Workflow Automation coming soon!')">
+                                    New Workflow <span class="badge-coming-soon ms-1">Soon</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Timeline -->
+            <div class="dashboard-card mb-4">
+                <div class="dashboard-card-header">
+                    <h5 class="dashboard-card-title">
+                        <i class="fas fa-history text-primary"></i> Recent Activity
+                    </h5>
+                    <a href="#" class="small text-primary text-decoration-none fw-medium" onclick="alert('Full activity history log coming soon!'); return false;">View All</a>
+                </div>
+                <div class="dashboard-card-body" id="recentActivityTimeline">
+                    <!-- Populated dynamically via dashboard.js -->
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary spinner-border-sm" role="status">
+                            <span class="visually-hidden">Loading activity...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ============================================
+         5. USER PROFILE MODAL
+         ============================================ -->
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-dark" id="profileModalLabel">
+                        <i class="fas fa-user-shield text-primary me-2"></i> User Profile & Session
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="text-center mb-4">
+                        <div class="avatar-circle mx-auto mb-2" style="width: 64px; height: 64px; font-size: 1.5rem;">IB</div>
+                        <h5 class="fw-bold text-dark mb-0" id="modalFullName">Loading...</h5>
+                        <p class="text-muted small" id="modalCompany">Company</p>
+                    </div>
+
+                    <div class="list-group list-group-flush rounded-3 border">
+                        <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                            <span class="text-muted small">Email Address</span>
+                            <span class="fw-semibold text-dark small" id="modalEmail">-</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                            <span class="text-muted small">Account Role</span>
+                            <span class="badge bg-success-subtle text-success border border-success px-3 py-1 rounded-pill" id="modalRole">USER</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                            <span class="text-muted small">Member Since</span>
+                            <span class="fw-semibold text-dark small" id="modalCreatedDate">-</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                            <span class="text-muted small">Authentication</span>
+                            <span class="badge bg-primary-subtle text-primary border border-primary px-3 py-1 rounded-pill">JWT HTTPBearer</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0 justify-content-between">
+                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3" id="btnLogoutModal">
+                        <i class="fas fa-sign-out-alt me-1"></i> Logout
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Dashboard Controller -->
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
