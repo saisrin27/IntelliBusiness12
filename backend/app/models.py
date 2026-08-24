@@ -1,5 +1,6 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey, JSON
+from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey, JSON, Boolean
+
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -18,8 +19,11 @@ class User(Base):
     documents = relationship("Document", back_populates="owner", cascade="all, delete-orphan")
     document_summaries = relationship("DocumentSummary", back_populates="owner", cascade="all, delete-orphan")
     chats = relationship("Chat", back_populates="owner", cascade="all, delete-orphan")
+    conversations = relationship("ChatConversation", back_populates="owner", cascade="all, delete-orphan")
     emails = relationship("Email", back_populates="owner", cascade="all, delete-orphan")
+    gmail_account = relationship("UserGmailAccount", back_populates="owner", uselist=False, cascade="all, delete-orphan")
     workflows = relationship("Workflow", back_populates="owner", cascade="all, delete-orphan")
+
     analytics = relationship("Analytics", back_populates="owner", cascade="all, delete-orphan")
     history_items = relationship("History", back_populates="owner", cascade="all, delete-orphan")
 
@@ -82,18 +86,53 @@ class Chat(Base):
     owner = relationship("User", back_populates="chats")
 
 
+class ChatConversation(Base):
+    __tablename__ = "chat_conversations"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    title = Column(String(255), nullable=False, default="New Conversation")
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    owner = relationship("User", back_populates="conversations")
+    messages = relationship("ChatMessage", back_populates="conversation", cascade="all, delete-orphan", order_by="ChatMessage.created_at.asc()")
+
+
+class ChatMessage(Base):
+    __tablename__ = "chat_messages"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    conversation_id = Column(Integer, ForeignKey("chat_conversations.id"), nullable=False, index=True)
+    role = Column(String(50), nullable=False)
+    content = Column(Text, nullable=False)
+    sources = Column(JSON, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    conversation = relationship("ChatConversation", back_populates="messages")
+
+
+
 class Email(Base):
     __tablename__ = "emails"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    user_name = Column(String(255), nullable=True)
+    recipient_name = Column(String(255), nullable=True)
+    recipient_email = Column(String(255), nullable=False)
     subject = Column(String(255), nullable=False)
-    recipient = Column(String(255), nullable=False)
-    body = Column(Text, nullable=False)
+    content = Column(Text, nullable=False)
+    tone = Column(String(50), nullable=True, default="Professional")
+    length = Column(String(50), nullable=True, default="Medium")
+    status = Column(String(50), default="draft", nullable=False)  # draft, sending, sent, failed
+    error_message = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    status = Column(String(50), default="draft", nullable=False)
+    sent_at = Column(DateTime, nullable=True)
 
     owner = relationship("User", back_populates="emails")
+
+
 
 
 class Workflow(Base):
@@ -102,12 +141,31 @@ class Workflow(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     name = Column(String(255), nullable=False)
-    description = Column(Text, nullable=True)
-    definition = Column(JSON, nullable=True)
+    trigger_type = Column(String(100), nullable=False, default="document_uploaded")
+    actions = Column(JSON, nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    status = Column(String(50), default="draft", nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     owner = relationship("User", back_populates="workflows")
+    runs = relationship("WorkflowRun", back_populates="workflow", cascade="all, delete-orphan", order_by="WorkflowRun.started_at.desc()")
+
+
+class WorkflowRun(Base):
+    __tablename__ = "workflow_runs"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    workflow_id = Column(Integer, ForeignKey("workflows.id"), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    status = Column(String(50), default="pending", nullable=False)  # pending, running, completed, failed
+    started_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    completed_at = Column(DateTime, nullable=True)
+    result = Column(JSON, nullable=True)
+    error_message = Column(Text, nullable=True)
+
+    workflow = relationship("Workflow", back_populates="runs")
+    owner = relationship("User")
+
 
 
 class Analytics(Base):
@@ -134,3 +192,39 @@ class History(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     owner = relationship("User", back_populates="history_items")
+
+
+class UserGmailAccount(Base):
+    __tablename__ = "user_gmail_accounts"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, unique=True, index=True)
+    gmail_address = Column(String(255), nullable=False)
+    access_token = Column(Text, nullable=False)
+    refresh_token = Column(Text, nullable=True)
+    token_uri = Column(String(255), default="https://oauth2.googleapis.com/token", nullable=False)
+    token_expiry = Column(DateTime, nullable=True)
+    scopes = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    owner = relationship("User", back_populates="gmail_account")
+
+
+class BusinessDataset(Base):
+    __tablename__ = "business_datasets"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    filename = Column(String(255), nullable=False)
+    original_filename = Column(String(255), nullable=False)
+    file_path = Column(String(500), nullable=False)
+    file_type = Column(String(50), nullable=False)
+    extracted_summary = Column(JSON, nullable=True)
+    insights = Column(JSON, nullable=True)
+    charts_config = Column(JSON, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    owner = relationship("User")
+
+

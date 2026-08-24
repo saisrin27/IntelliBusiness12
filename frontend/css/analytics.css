@@ -1,0 +1,96 @@
+/* Analytics Dashboard Custom Styles */
+
+.period-pill-group {
+    background: #f1f5f9;
+    padding: 3px;
+    border-radius: 20px;
+    display: inline-flex;
+    gap: 2px;
+}
+
+.period-pill {
+    background: transparent;
+    border: none;
+    padding: 5px 14px;
+    font-size: 0.775rem;
+    font-weight: 600;
+    color: #64748b;
+    border-radius: 16px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.period-pill:hover {
+    color: #0f172a;
+}
+
+.period-pill.active {
+    background: #ffffff;
+    color: #2563eb;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.kpi-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    transition: transform 0.2s ease;
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+
+.kpi-title {
+    font-size: 0.775rem;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.kpi-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+}
+
+.kpi-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.kpi-subtext {
+    font-size: 0.725rem;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+
+/* Activity stream */
+.activity-stream-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.activity-stream-item:last-child {
+    border-bottom: none;
+}
+
+.activity-icon-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}

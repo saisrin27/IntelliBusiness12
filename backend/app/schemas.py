@@ -106,3 +106,106 @@ class DocumentSummaryCreateResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# ============================================
+# AI ASSISTANT SCHEMAS
+# ============================================
+
+class ChatRequest(BaseModel):
+    message: str = Field(..., min_length=1)
+    conversation_id: Optional[int] = None
+
+
+class ChatSource(BaseModel):
+    document_id: int
+    filename: str
+
+
+class ChatMessageResponse(BaseModel):
+    id: int
+    conversation_id: int
+    role: str
+    content: str
+    sources: Optional[List[ChatSource]] = None
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class ChatConversationResponse(BaseModel):
+    id: int
+    user_id: int
+    title: str
+    created_at: datetime
+    updated_at: datetime
+    messages: Optional[List[ChatMessageResponse]] = None
+
+    class Config:
+        from_attributes = True
+
+
+class ChatResponse(BaseModel):
+    conversation_id: int
+    title: str
+    message: str
+    sources: List[ChatSource]
+
+
+# ============================================
+# AI EMAIL GENERATOR SCHEMAS
+# ============================================
+
+class EmailGenerateRequest(BaseModel):
+    recipient_name: Optional[str] = ""
+    recipient_email: Optional[str] = ""
+    purpose: str = Field(..., min_length=3)
+    tone: str = "Professional"  # Professional, Friendly, Formal, Apologetic
+    length: str = "Medium"      # Short, Medium, Detailed
+
+
+class EmailImproveRequest(BaseModel):
+    subject: str
+    content: str
+    action: str  # make_professional, make_shorter, make_friendlier, fix_grammar
+
+
+class EmailSaveDraftRequest(BaseModel):
+    id: Optional[int] = None
+    recipient_name: Optional[str] = ""
+    recipient_email: str
+    subject: str
+    content: str
+    tone: Optional[str] = "Professional"
+    length: Optional[str] = "Medium"
+
+
+class EmailSendRequest(BaseModel):
+    id: Optional[int] = None
+    recipient_name: Optional[str] = ""
+    recipient_email: str
+    subject: str
+    content: str
+
+
+class EmailResponse(BaseModel):
+    id: int
+    user_id: int
+    user_name: Optional[str] = ""
+    recipient_name: Optional[str] = ""
+    recipient_email: str
+    subject: str
+    content: str
+    tone: Optional[str] = ""
+    length: Optional[str] = ""
+    status: str
+    error_message: Optional[str] = None
+    created_at: datetime
+    sent_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+

@@ -195,25 +195,47 @@ function renderActivityTimeline(container, activities) {
 
 function renderEmptyActivityState(container) {
     container.innerHTML = `
-        <div class="empty-state-box">
-            <div class="empty-state-icon">
+        <div class="empty-state-box p-4 text-center">
+            <div class="empty-state-icon text-muted mb-2 fs-2">
                 <i class="fas fa-history"></i>
             </div>
-            <div class="empty-state-title">No recent activity yet</div>
-            <div class="empty-state-desc">Your document analysis, AI chat interactions, and workflow executions will appear here.</div>
-            <button class="btn btn-primary btn-sm rounded-pill px-3" onclick="alert('Document upload module coming in Phase 4!')">
-                <i class="fas fa-plus me-1"></i> Start First Task
-            </button>
+            <div class="empty-state-title fw-bold text-dark mb-1">No recent activity yet</div>
+            <div class="empty-state-desc text-muted small mb-3">Your uploaded documents, AI chat interactions, and generated emails will appear here automatically.</div>
+            <a href="documents.html" class="btn btn-primary btn-sm rounded-pill px-3">
+                <i class="fas fa-upload me-1"></i> Upload First Document
+            </a>
         </div>
     `;
 }
 
 /**
- * Initializes Chart.js Productivity Chart
+ * Initializes Chart.js Productivity Chart with REAL-TIME data
  */
-function initProductivityChart() {
+async function initProductivityChart() {
     const canvas = document.getElementById('productivityChart');
     if (!canvas) return;
+
+    const token = localStorage.getItem('access_token');
+    let labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    let aiTasksData = [0, 0, 0, 0, 0, 0, 0];
+    let docsData = [0, 0, 0, 0, 0, 0, 0];
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/dashboard/chart-data`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (res.ok) {
+            const chartInfo = await res.json();
+            labels = chartInfo.labels || labels;
+            aiTasksData = chartInfo.ai_tasks || aiTasksData;
+            docsData = chartInfo.documents || docsData;
+        }
+    } catch (e) {
+        console.warn('Unable to load chart data:', e);
+    }
 
     const ctx = canvas.getContext('2d');
     
@@ -229,11 +251,11 @@ function initProductivityChart() {
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            labels: labels,
             datasets: [
                 {
                     label: 'AI Tasks Processed',
-                    data: [12, 19, 15, 28, 24, 32, 26],
+                    data: aiTasksData,
                     borderColor: '#2563EB',
                     backgroundColor: gradientBlue,
                     borderWidth: 3,
@@ -245,7 +267,7 @@ function initProductivityChart() {
                 },
                 {
                     label: 'Documents Analyzed',
-                    data: [5, 8, 12, 10, 15, 9, 14],
+                    data: docsData,
                     borderColor: '#7C3AED',
                     backgroundColor: gradientPurple,
                     borderWidth: 2,
@@ -285,13 +307,14 @@ function initProductivityChart() {
                 },
                 y: {
                     grid: { color: '#F1F5F9' },
-                    ticks: { font: { family: 'Poppins', size: 12 }, color: '#64748B', stepSize: 10 },
+                    ticks: { font: { family: 'Poppins', size: 12 }, color: '#64748B', precision: 0 },
                     beginAtZero: true
                 }
             }
         }
     });
 }
+
 
 /**
  * Initializes Getting Started Checklist

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workflow Automation - IntelliBusiness</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/workflows.css">
+</head>
+<body class="dashboard-body">
+
+    <!-- ============================================
+         1. SIDEBAR NAVIGATION
+         ============================================ -->
+    <aside class="sidebar-wrapper">
+        <a href="dashboard.html" class="sidebar-brand">
+            <div class="sidebar-brand-logo">
+                <i class="fas fa-brain"></i>
+            </div>
+            <span class="sidebar-brand-text">IntelliBusiness</span>
+        </a>
+
+        <div class="sidebar-menu">
+            <div class="sidebar-section-label">Main Menu</div>
+            
+            <a href="dashboard.html" class="sidebar-nav-item">
+                <i class="fas fa-chart-pie"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <a href="documents.html" class="sidebar-nav-item">
+                <i class="fas fa-folder-open"></i>
+                <span>Documents</span>
+            </a>
+
+            <a href="ai-assistant.html" class="sidebar-nav-item">
+                <i class="fas fa-robot"></i>
+                <span>AI Assistant</span>
+            </a>
+
+            <a href="email-generator.html" class="sidebar-nav-item">
+                <i class="fas fa-paper-plane"></i>
+                <span>Email Generator</span>
+            </a>
+
+            <a href="business-analytics.html" class="sidebar-nav-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Business Analytics</span>
+            </a>
+
+            <a href="analytics.html" class="sidebar-nav-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>System Analytics</span>
+            </a>
+
+
+            <a href="workflows.html" class="sidebar-nav-item active">
+                <i class="fas fa-network-wired"></i>
+                <span>Workflows</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user-card mb-2">
+                <div class="sidebar-user-avatar" id="sidebarUserAvatar">U</div>
+                <div class="sidebar-user-info">
+                    <div class="sidebar-user-name" id="sidebarUserName">User Name</div>
+                    <div class="sidebar-user-role" id="sidebarUserRole">Administrator</div>
+                </div>
+            </div>
+            <button class="btn btn-outline-danger btn-sm w-100 rounded-pill" id="logoutBtn">
+                <i class="fas fa-sign-out-alt me-1"></i> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- ============================================
+         2. MAIN WRAPPER CONTAINER
+         ============================================ -->
+    <div class="main-wrapper">
+
+        <!-- Top Navigation Bar -->
+        <header class="topbar-wrapper">
+            <div class="d-flex align-items-center">
+                <button class="mobile-toggle-btn me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div>
+                    <h1 class="topbar-title h5 font-bold m-0 text-dark">Workflow Automation</h1>
+                    <small class="text-muted">Automate multi-step business routines with triggers and AI actions</small>
+                </div>
+            </div>
+            <div class="topbar-actions d-flex align-items-center gap-2">
+                <button class="btn btn-outline-secondary rounded-pill px-3" id="btnViewHistoryTop">
+                    <i class="fas fa-history me-1"></i> Execution History
+                </button>
+                <button class="btn btn-primary rounded-pill px-3 fw-semibold" id="btnCreateWorkflowTop">
+                    <i class="fas fa-plus me-1"></i> Create Workflow
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Page Content Area -->
+        <main class="dashboard-content">
+            
+            <!-- AI WORKFLOW CREATION BANNER -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="fas fa-wand-magic-sparkles text-warning fs-4"></i>
+                    <h5 class="fw-bold m-0 text-white">Create Workflow with AI</h5>
+                </div>
+                <p class="small text-light opacity-75 mb-3">Describe what you want IntelliBusiness to do in simple language. Gemini will automatically build the workflow for you.</p>
+                
+                <div class="row g-2">
+                    <div class="col-md-9">
+                        <input type="text" class="form-control form-control-lg rounded-pill fs-6" id="aiWorkflowPromptInput" placeholder="e.g. When I upload an invoice, analyze it and email the summary to my manager.">
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-warning btn-lg w-100 rounded-pill fw-semibold text-dark fs-6" id="btnBuildWithAi">
+                            <i class="fas fa-robot me-1"></i> Build Workflow
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Example prompts -->
+                <div class="d-flex flex-wrap gap-2 mt-3">
+                    <span class="text-light opacity-75 small">Examples:</span>
+                    <button class="btn btn-sm btn-outline-light rounded-pill pill-ai-wf" data-prompt="When I upload an invoice, analyze it and email the summary to my manager.">Invoice → Analyze → Email Manager</button>
+                    <button class="btn btn-sm btn-outline-light rounded-pill pill-ai-wf" data-prompt="Analyze the uploaded sales Excel file and send the PDF report to john@company.com.">Sales Excel → PDF Report → Email</button>
+                </div>
+            </div>
+
+            <!-- Workflows List Header & Filters -->
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+
+                <div>
+                    <h5 class="fw-bold m-0 text-dark">Your Workflows</h5>
+                    <small class="text-muted">Active routines run automatically when triggered</small>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-sm btn-light border rounded-pill px-3" id="btnRefreshWorkflows">
+                        <i class="fas fa-rotate me-1"></i> Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Workflows Container Grid -->
+            <div class="row g-3" id="workflowsGrid">
+                <!-- Rendered dynamically via JavaScript -->
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ============================================
+         3. CREATE / EDIT WORKFLOW MODAL
+         ============================================ -->
+    <div class="modal fade" id="workflowModal" tabindex="-1" aria-labelledby="workflowModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header border-bottom p-3">
+                    <h5 class="modal-title fw-bold text-dark" id="workflowModalLabel">
+                        <i class="fas fa-network-wired text-primary me-2"></i> Create New Workflow
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="workflowForm">
+                        <input type="hidden" id="workflowEditId">
+                        
+                        <!-- Workflow Name -->
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold text-dark">Workflow Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control rounded-3" id="workflowName" placeholder="e.g. Document Upload → AI Summary → Email Alert" required>
+                        </div>
+
+                        <!-- Vertical Builder Section -->
+                        <div class="builder-container mb-4">
+                            <div class="text-muted small fw-semibold mb-2"><i class="fas fa-sitemap me-1"></i> Visual Flow Builder</div>
+                            
+                            <!-- 1. TRIGGER BLOCK -->
+                            <div class="builder-node builder-trigger">
+                                <div class="node-badge">1. TRIGGER</div>
+                                <div class="node-content">
+                                    <label class="form-label small fw-semibold text-dark mb-1">When this event occurs:</label>
+                                    <select class="form-select rounded-3" id="triggerTypeSelect" required>
+                                        <option value="document_uploaded">📄 Document Uploaded</option>
+                                        <option value="document_processed">✅ Document Processed & Indexed</option>
+                                        <option value="email_generated">✉️ Email Generated</option>
+                                        <option value="manual_trigger">⚡ Manual Trigger Only</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Flow Down Arrow -->
+                            <div class="flow-arrow">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+
+                            <!-- 2. ACTIONS CONTAINER -->
+                            <div id="actionStepsContainer">
+                                <!-- Action Steps rendered dynamically -->
+                            </div>
+
+                            <!-- Add Action Step Button -->
+                            <div class="text-center mt-3">
+                                <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3" id="btnAddActionStep">
+                                    <i class="fas fa-plus me-1"></i> Add Action Step
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Active Toggle -->
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="workflowIsActive" checked>
+                            <label class="form-check-label small fw-semibold text-dark" for="workflowIsActive">Enable workflow immediately upon saving</label>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer border-top p-3 d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" class="btn btn-outline-primary rounded-pill px-4 fw-semibold" id="btnSaveWorkflow">
+                            <i class="fas fa-check me-1"></i> Save Workflow
+                        </button>
+                        <button type="button" class="btn btn-primary rounded-pill px-4 fw-semibold" id="btnSaveAndRunWorkflow">
+                            <i class="fas fa-play me-1"></i> Save & Run Workflow
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         4. WORKFLOW EXECUTION HISTORY MODAL
+         ============================================ -->
+    <div class="modal fade" id="historyModal" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header border-bottom p-3">
+                    <h5 class="modal-title fw-bold text-dark" id="historyModalLabel">
+                        <i class="fas fa-history text-primary me-2"></i> Workflow Execution History
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-3 overflow-y-auto" style="max-height: 500px;" id="historyListContainer">
+                    <!-- Rendered dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- App JavaScript -->
+    <script src="js/workflows.js"></script>
+</body>
+</html>

@@ -15,12 +15,12 @@ for p in [str(root_dir), str(backend_dir)]:
         sys.path.insert(0, p)
 
 from .database import engine, Base
-from .routers import auth, dashboard, documents
+from .routers import ai_assistant, analytics, auth, business_analytics, dashboard, documents, emails, workflows
 
 # Load environment variables
 dotenv_path = root_dir / ".env"
 if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path)
+    load_dotenv(dotenv_path, override=True)
 
 # Automatically create tables if database is connected
 try:
@@ -53,6 +53,16 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(dashboard.router)
 app.include_router(documents.router)
+app.include_router(ai_assistant.router)
+app.include_router(emails.router)
+app.include_router(workflows.router)
+app.include_router(analytics.router)
+app.include_router(business_analytics.router)
+
+
+
+
+
 
 
 @app.get("/", tags=["Health"])

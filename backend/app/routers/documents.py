@@ -207,8 +207,42 @@ def upload_documents(
         db.commit()
         db.refresh(doc)
 
+        # Trigger active workflows for 'document_uploaded'
+        try:
+            from ..services.workflow_service import workflow_engine_service
+            workflow_engine_service.trigger_event(
+                user_id=current_user.id,
+                trigger_type="document_uploaded",
+                payload={
+                    "document_id": doc.id,
+                    "original_filename": original_name,
+                    "file_path": str(file_path),
+                },
+                db=db,
+            )
+        except Exception as exc:
+            print(f"[DocumentUpload] Workflow trigger error: {exc}")
+
         process_document_record(doc, db)
+
+        # Trigger active workflows for 'document_processed'
+        if doc.processing_status == "completed":
+            try:
+                workflow_engine_service.trigger_event(
+                    user_id=current_user.id,
+                    trigger_type="document_processed",
+                    payload={
+                        "document_id": doc.id,
+                        "original_filename": original_name,
+                        "file_path": str(file_path),
+                    },
+                    db=db,
+                )
+            except Exception as exc:
+                print(f"[DocumentProcessed] Workflow trigger error: {exc}")
+
         saved_documents.append(doc)
+
 
     return [DocumentResponse.from_orm(item) for item in saved_documents]
 

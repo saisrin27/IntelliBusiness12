@@ -39,6 +39,16 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     return encoded_jwt
 
 
+def decode_access_token(token: str) -> dict:
+    """Decodes a JWT access token and returns its payload dictionary."""
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except jwt.PyJWTError as exc:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token.") from exc
+
+
+
 def create_document_view_token(document_id: int, user_id: int, expires_minutes: int = 3) -> str:
     """Creates a short-lived signed token for secure document viewing in a new browser tab."""
     payload = {
