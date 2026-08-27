@@ -637,6 +637,16 @@ body.dashboard-body.dark-mode .input-group-text {
     padding-left: 0.5rem;
 }
 
+.timeline-list-expanded {
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 0.75rem;
+}
+
+.timeline-list:not(.timeline-list-expanded) .timeline-item:nth-child(n + 5) {
+    display: none;
+}
+
 .timeline-item {
     position: relative;
     padding-left: 2.25rem;

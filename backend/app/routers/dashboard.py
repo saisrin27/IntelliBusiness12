@@ -118,7 +118,6 @@ def get_recent_activity(
         db.query(Document)
         .filter(Document.user_id == current_user.id)
         .order_by(Document.upload_date.desc())
-        .limit(5)
         .all()
     )
     for doc in docs:
@@ -140,7 +139,6 @@ def get_recent_activity(
         db.query(Email)
         .filter(Email.user_id == current_user.id)
         .order_by(Email.created_at.desc())
-        .limit(5)
         .all()
     )
     for email in emails:
@@ -163,7 +161,6 @@ def get_recent_activity(
         db.query(ChatConversation)
         .filter(ChatConversation.user_id == current_user.id)
         .order_by(ChatConversation.updated_at.desc())
-        .limit(5)
         .all()
     )
     for chat in chats:
@@ -183,9 +180,9 @@ def get_recent_activity(
     # Sort combined activities by raw_time descending
     activities.sort(key=lambda x: x["raw_time"] if x["raw_time"] else datetime.datetime.min, reverse=True)
 
-    # Return top 8 real activity items
+    # Return the complete combined activity stream; the dashboard controls the initial view limit.
     final_activities = []
-    for item in activities[:8]:
+    for item in activities:
         final_activities.append({
             "id": item["id"],
             "type": item["type"],

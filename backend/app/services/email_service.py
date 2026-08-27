@@ -2,6 +2,8 @@ import json
 import os
 import re
 import smtplib
+from email import encoders
+from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from typing import Any, Dict, Optional
@@ -176,6 +178,7 @@ class SMTPSenderService:
         content: str,
         recipient_name: Optional[str] = "",
         user_name: str = "IntelliBusiness User",
+        attachment_path: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Send email to recipient using the central IntelliBusiness backend SMTP account."""
         if not recipient_email or "@" not in recipient_email:
@@ -193,7 +196,7 @@ class SMTPSenderService:
             }
 
         try:
-            msg = MIMEMultipart("alternative")
+            msg = MIMEMultipart("mixed")
             msg["Subject"] = subject
             msg["From"] = f"IntelliBusiness Service <{smtp_from_email}>"
             msg["To"] = f"{recipient_name} <{recipient_email}>" if recipient_name else recipient_email
@@ -219,6 +222,21 @@ class SMTPSenderService:
             """
             html_part = MIMEText(html_body, "html", "utf-8")
             msg.attach(html_part)
+
+            if attachment_path:
+                attachment_file = Path(attachment_path)
+                if not attachment_file.is_file():
+                    return {"success": False, "error": "The requested email attachment was not found."}
+                with attachment_file.open("rb") as file_handle:
+                    attachment = MIMEBase("application", "pdf")
+                    attachment.set_payload(file_handle.read())
+                encoders.encode_base64(attachment)
+                attachment.add_header(
+                    "Content-Disposition",
+                    "attachment",
+                    filename=attachment_file.name,
+                )
+                msg.attach(attachment)
 
             # Connect and send via SMTP with STARTTLS
             server = smtplib.SMTP(smtp_host, smtp_port, timeout=15)

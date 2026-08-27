@@ -2,6 +2,7 @@ import datetime
 import json
 import os
 import re
+from xml.sax.saxutils import escape
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 import pandas as pd
@@ -51,6 +52,7 @@ class BusinessAnalyticsService:
         key_stats = {}
         charts_config = []
         insights = []
+        dataset_overview = {}
 
         if raw_df is not None and not raw_df.empty:
             # Clean dataframe column names
@@ -58,6 +60,11 @@ class BusinessAnalyticsService:
 
             total_rows = len(raw_df)
             key_stats["Total Records / Rows"] = total_rows
+            dataset_overview = {
+                "Rows": total_rows,
+                "Columns": len(raw_df.columns),
+                "Column Names": ", ".join(str(column) for column in raw_df.columns),
+            }
 
             # Detect numerical and categorical columns
             numeric_cols = raw_df.select_dtypes(include=["number"]).columns.tolist()
@@ -195,6 +202,7 @@ class BusinessAnalyticsService:
 
         return {
             "filename": original_filename,
+            "dataset_overview": dataset_overview,
             "key_stats": key_stats,
             "charts_config": charts_config,
             "insights": insights,
@@ -497,7 +505,23 @@ class BusinessAnalyticsService:
         # Executive Summary / File details
         story.append(Paragraph("Executive Summary", section_style))
         filename = dataset_info.get("filename", "Dataset")
-        story.append(Paragraph(f"This automated analysis report presents structured business intelligence derived directly from <b>{filename}</b>.", body_style))
+        story.append(Paragraph(f"This automated analysis report presents structured business intelligence derived directly from <b>{escape(str(filename))}</b>.", body_style))
+
+        story.append(Paragraph("Dataset Overview", section_style))
+        overview = dataset_info.get("dataset_overview", {})
+        if overview:
+            overview_data = [["Attribute", "Value"]]
+            overview_data.extend([[str(key), escape(str(value))] for key, value in overview.items()])
+            overview_table = Table(overview_data, colWidths=[240, 280])
+            overview_table.setStyle(TableStyle([
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#f1f5f9")),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, -1), 9),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+                ("TOPPADDING", (0, 0), (-1, -1), 6),
+                ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#cbd5e1")),
+            ]))
+            story.append(overview_table)
 
         # Key Statistics Table
         story.append(Paragraph("Key Business Statistics", section_style))
@@ -524,7 +548,21 @@ class BusinessAnalyticsService:
         story.append(Paragraph("Key Strategic Insights", section_style))
         insights = dataset_info.get("insights", [])
         for item in insights:
-            story.append(Paragraph(f"&bull; {item}", body_style))
+            story.append(Paragraph(f"&bull; {escape(str(item))}", body_style))
+
+        story.append(Paragraph("Key Findings", section_style))
+        findings = dataset_info.get("key_findings") or insights
+        for item in findings:
+            story.append(Paragraph(f"&bull; {escape(str(item))}", body_style))
+
+        story.append(Paragraph("Recommendations", section_style))
+        recommendations = dataset_info.get("recommendations") or [
+            "Review the highest-performing segments and prioritize resources accordingly.",
+            "Monitor the trends shown in the report regularly to identify material changes early.",
+            "Use the calculated KPIs as a baseline for future business planning and measurement.",
+        ]
+        for item in recommendations:
+            story.append(Paragraph(f"&bull; {escape(str(item))}", body_style))
 
         # Visualization charts from the same data used by the dashboard.
         charts_config = dataset_info.get("charts_config", [])

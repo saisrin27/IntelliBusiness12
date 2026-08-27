@@ -1,5 +1,6 @@
 import datetime
 import json
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 from sqlalchemy.orm import Session
 
@@ -37,6 +38,19 @@ class WorkflowEngineService:
             if text:
                 return text, source
         return "", "none"
+
+    @staticmethod
+    def _is_tabular_file(file_type: str) -> bool:
+        return str(file_type).lower().lstrip(".") in {"csv", "xlsx", "xls", "excel"}
+
+    @staticmethod
+    def _clean_analysis_text(analysis_result: Dict[str, Any]) -> str:
+        insights = analysis_result.get("insights", [])
+        key_stats = analysis_result.get("key_stats", {})
+        lines = [str(item) for item in insights if str(item).strip()]
+        if key_stats:
+            lines.append("Key metrics: " + "; ".join(f"{key}: {value}" for key, value in key_stats.items()))
+        return "\n".join(f"- {line}" for line in lines)
 
     def execute_workflow(
         self,
@@ -81,6 +95,7 @@ class WorkflowEngineService:
             "analysis_result": trigger_payload.get("analysis_result"),
             "email_body": None,
             "last_output": None,
+            "report_pdf": None,
         }
 
         file_path = trigger_payload.get("file_path")
@@ -147,8 +162,34 @@ class WorkflowEngineService:
                 elif action_type == "send_email":
                     recipient_email = action_config.get("recipient_email") or trigger_payload.get("recipient_email") or (user.email if user else "")
                     subject = action_config.get("subject") or f"Automated Workflow Alert: {workflow.name}"
+
+                    if self._is_tabular_file(context.get("file_type", "")) and file_path and not context.get("report_pdf"):
+                        analysis_result = context.get("analysis_result")
+                        if not isinstance(analysis_result, dict):
+                            analysis_result = business_analytics_service.parse_and_analyze_data(
+                                file_path, context["document_name"]
+                            )
+                        report_path = Path(file_path).with_name(
+                            f"Business_Analysis_Workflow_Report_{run.id}.pdf"
+                        )
+                        business_analytics_service.generate_pdf_report(analysis_result, str(report_path))
+                        context["analysis_result"] = analysis_result
+                        context["business_analysis"] = self._clean_analysis_text(analysis_result)
+                        context["report_pdf"] = str(report_path)
                     
-                    email_body, body_source = self._select_email_body(context)
+                    report_pdf = context.get("report_pdf")
+                    if report_pdf:
+                        subject = "Your IntelliBusiness Analytics Report"
+                        email_body = (
+                            "Hello,\n\n"
+                            "Your requested business analytics report has been generated successfully.\n\n"
+                            "Please find the complete report attached.\n\n"
+                            "Regards,\n"
+                            "IntelliBusiness"
+                        )
+                        body_source = "report_pdf"
+                    else:
+                        email_body, body_source = self._select_email_body(context)
                     print(
                         f"[WorkflowEngineService] Email context keys={list(context.keys())}; "
                         f"previous_step_type={step_results[-1].get('action_type') if step_results else None}; "
@@ -167,6 +208,7 @@ class WorkflowEngineService:
                         subject=subject,
                         content=email_body,
                         user_name=user_name,
+                        attachment_path=report_pdf,
                     )
                     
                     step_output = {
@@ -208,10 +250,17 @@ class WorkflowEngineService:
                     if not analysis_text:
                         raise ValueError("No document content available for analysis.")
                     file_type = context.get("file_type", "")
-                    if file_path and file_type in {"csv", "xlsx", "xls"}:
+                    if file_path and self._is_tabular_file(file_type):
                         analysis_result = business_analytics_service.parse_and_analyze_data(
                             file_path, context["document_name"]
                         )
+                        context["business_analysis"] = self._clean_analysis_text(analysis_result)
+                        context["analysis_result"] = analysis_result
+                        report_path = Path(file_path).with_name(
+                            f"Business_Analysis_Workflow_Report_{run.id}.pdf"
+                        )
+                        business_analytics_service.generate_pdf_report(analysis_result, str(report_path))
+                        context["report_pdf"] = str(report_path)
                     else:
                         prompt = (
                             f"Perform a strategic AI business analysis on this content:\n\n{analysis_text}\n\n"
@@ -219,7 +268,8 @@ class WorkflowEngineService:
                         )
                         analysis_result = self.summarizer._call_gemini_api(prompt).strip()
                     context["analysis_result"] = analysis_result
-                    context["business_analysis"] = analysis_result
+                    if not (file_path and self._is_tabular_file(file_type)):
+                        context["business_analysis"] = analysis_result
                     context["last_output"] = analysis_result
                     context["email_body"] = analysis_result
                     step_output = {

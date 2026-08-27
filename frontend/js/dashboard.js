@@ -3,6 +3,9 @@
  */
 
 const API_BASE_URL = 'http://127.0.0.1:8000';
+const INITIAL_ACTIVITY_LIMIT = 4;
+let allDashboardActivities = [];
+let isActivityExpanded = false;
 
 document.addEventListener('DOMContentLoaded', async () => {
     // 1. JWT Authentication Verification & User Profile Fetch
@@ -166,8 +169,11 @@ async function loadRecentActivity(token) {
         if (response.ok) {
             const activities = await response.json();
             if (Array.isArray(activities) && activities.length > 0) {
+                allDashboardActivities = activities;
+                isActivityExpanded = false;
                 renderActivityTimeline(container, activities);
             } else {
+                allDashboardActivities = [];
                 renderEmptyActivityState(container);
             }
         } else {
@@ -180,8 +186,16 @@ async function loadRecentActivity(token) {
 }
 
 function renderActivityTimeline(container, activities) {
-    let html = '<div class="timeline-list">';
-    activities.forEach(act => {
+    const visibleActivities = isActivityExpanded ? activities : activities.slice(0, INITIAL_ACTIVITY_LIMIT);
+    const toggle = document.getElementById('recentActivityToggle');
+    if (toggle) {
+        toggle.textContent = isActivityExpanded ? 'Show Less' : 'View All';
+        toggle.hidden = activities.length <= INITIAL_ACTIVITY_LIMIT;
+        toggle.setAttribute('aria-expanded', String(isActivityExpanded));
+    }
+
+    let html = `<div class="timeline-list${isActivityExpanded ? ' timeline-list-expanded' : ''}">`;
+    visibleActivities.forEach(act => {
         html += `
             <div class="timeline-item">
                 <div class="timeline-badge ${act.bg_color || 'bg-light'} ${act.icon_color || 'text-primary'}">
@@ -197,7 +211,23 @@ function renderActivityTimeline(container, activities) {
     container.innerHTML = html;
 }
 
+function toggleRecentActivity(event) {
+    event.preventDefault();
+    if (allDashboardActivities.length <= INITIAL_ACTIVITY_LIMIT) return;
+
+    isActivityExpanded = !isActivityExpanded;
+    const container = document.getElementById('recentActivityTimeline');
+    if (container) renderActivityTimeline(container, allDashboardActivities);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const toggle = document.getElementById('recentActivityToggle');
+    if (toggle) toggle.addEventListener('click', toggleRecentActivity);
+});
+
 function renderEmptyActivityState(container) {
+    const toggle = document.getElementById('recentActivityToggle');
+    if (toggle) toggle.hidden = true;
     container.innerHTML = `
         <div class="empty-state-box p-4 text-center">
             <div class="empty-state-icon text-muted mb-2 fs-2">
