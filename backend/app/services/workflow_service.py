@@ -4,6 +4,8 @@ from typing import Any, Dict, List, Optional
 from sqlalchemy.orm import Session
 
 from ..models import History, User, Workflow, WorkflowRun
+from .business_analytics_service import business_analytics_service
+from .document_processor import extract_text_by_file_type
 from .email_service import smtp_sender_service
 from .summarization_service import SummarizationService
 
@@ -13,6 +15,28 @@ class WorkflowEngineService:
 
     def __init__(self):
         self.summarizer = SummarizationService()
+
+    @staticmethod
+    def _output_text(output: Any) -> str:
+        if isinstance(output, str):
+            return output.strip()
+        if output is None:
+            return ""
+        return json.dumps(output, ensure_ascii=False, indent=2, default=str)
+
+    @staticmethod
+    def _select_email_body(context: Dict[str, Any]) -> tuple[str, str]:
+        candidates = (
+            ("last_output", context.get("last_output")),
+            ("business_analysis", context.get("business_analysis")),
+            ("analysis_result", context.get("analysis_result")),
+            ("summary", context.get("summary")),
+        )
+        for source, value in candidates:
+            text = WorkflowEngineService._output_text(value)
+            if text:
+                return text, source
+        return "", "none"
 
     def execute_workflow(
         self,
@@ -45,24 +69,65 @@ class WorkflowEngineService:
         actions = workflow.actions if isinstance(workflow.actions, list) else []
         step_results = []
         context = {
+            "document_id": trigger_payload.get("document_id"),
+            "document_name": trigger_payload.get("original_filename", trigger_payload.get("document_title", "Document")),
+            "file_type": trigger_payload.get("file_type", ""),
             "trigger_type": workflow.trigger_type,
             "user_name": user_name,
             "document_title": trigger_payload.get("original_filename", trigger_payload.get("document_title", "Document")),
             "document_text": trigger_payload.get("document_text", trigger_payload.get("text", "")),
             "summary": trigger_payload.get("summary", ""),
-            "last_output": "",
+            "business_analysis": trigger_payload.get("business_analysis"),
+            "analysis_result": trigger_payload.get("analysis_result"),
+            "email_body": None,
+            "last_output": None,
         }
 
+        file_path = trigger_payload.get("file_path")
+        if not context["document_text"] and file_path:
+            file_type = context["file_type"] or str(file_path).rsplit(".", 1)[-1].lower()
+            context["file_type"] = file_type
+            try:
+                context["document_text"] = extract_text_by_file_type(file_path, file_type)
+            except ValueError:
+                # Tabular analytics can consume the source file directly.
+                context["document_text"] = ""
+
         try:
-            for idx, action_item in enumerate(actions, start=1):
+            idx = 0
+            while idx < len(actions):
+                action_item = actions[idx]
+                idx += 1
                 action_type = action_item.get("action_type", "")
                 action_config = action_item.get("config", {})
 
                 step_output = {}
 
                 # Action 1: Generate AI Summary
-                if action_type == "generate_summary":
-                    text_to_summarize = context["document_text"] or context["summary"] or context["document_title"]
+                if action_type == "condition":
+                    field_value = context.get(action_config.get("field", "last_output"))
+                    expected_value = action_config.get("value")
+                    operator = action_config.get("operator", "not_empty")
+                    if operator == "equals":
+                        condition_met = field_value == expected_value
+                    elif operator == "contains":
+                        condition_met = str(expected_value).casefold() in self._output_text(field_value).casefold()
+                    else:
+                        condition_met = bool(self._output_text(field_value))
+                    branch_key = "yes_actions" if condition_met else "no_actions"
+                    branch_actions = action_config.get(branch_key, [])
+                    if isinstance(branch_actions, list):
+                        actions[idx:idx] = branch_actions
+                    step_output = {
+                        "step": idx,
+                        "action_type": action_type,
+                        "status": "success",
+                        "branch": "yes" if condition_met else "no",
+                    }
+                elif action_type == "generate_summary":
+                    text_to_summarize = context["document_text"] or context["summary"]
+                    if not text_to_summarize:
+                        raise ValueError("No document content available to summarize.")
                     prompt = (
                         f"Summarize the following business document content concisely:\n\n{text_to_summarize}\n\n"
                         "Provide 3-5 bullet points highlighting the core facts."
@@ -70,6 +135,7 @@ class WorkflowEngineService:
                     summary_text = self.summarizer._call_gemini_api(prompt).strip()
                     context["summary"] = summary_text
                     context["last_output"] = summary_text
+                    context["email_body"] = summary_text
                     step_output = {
                         "step": idx,
                         "action_type": action_type,
@@ -82,10 +148,19 @@ class WorkflowEngineService:
                     recipient_email = action_config.get("recipient_email") or trigger_payload.get("recipient_email") or (user.email if user else "")
                     subject = action_config.get("subject") or f"Automated Workflow Alert: {workflow.name}"
                     
-                    email_body = action_config.get("content") or context["last_output"] or context["summary"] or f"Workflow '{workflow.name}' completed successfully."
+                    email_body, body_source = self._select_email_body(context)
+                    print(
+                        f"[WorkflowEngineService] Email context keys={list(context.keys())}; "
+                        f"previous_step_type={step_results[-1].get('action_type') if step_results else None}; "
+                        f"previous_output={email_body[:500]!r}; selected_source={body_source}"
+                    )
+                    if not email_body:
+                        raise ValueError("No valid workflow result available to send by email.")
                     
                     if user_name not in email_body:
                         email_body += f"\n\nRegards,\n{user_name}"
+                    context["email_body"] = email_body
+                    context["last_output"] = email_body
 
                     send_res = smtp_sender_service.send_email(
                         recipient_email=recipient_email,
@@ -100,6 +175,8 @@ class WorkflowEngineService:
                         "status": "success" if send_res.get("success") else "failed",
                         "recipient": recipient_email,
                         "subject": subject,
+                        "body_source": body_source,
+                        "output": email_body,
                         "error": send_res.get("error"),
                     }
 
@@ -123,16 +200,28 @@ class WorkflowEngineService:
                         "notification_title": title,
                         "notification_desc": desc,
                     }
+                    context["last_output"] = step_output
 
                 # Action 4: Run AI Analysis
                 elif action_type == "run_analysis":
-                    analysis_text = context["document_text"] or context["summary"] or context["document_title"]
-                    prompt = (
-                        f"Perform a strategic AI business analysis on this content:\n\n{analysis_text}\n\n"
-                        "Identify: 1) Key Risks, 2) Opportunities, 3) Actionable Recommendations."
-                    )
-                    analysis_result = self.summarizer._call_gemini_api(prompt).strip()
+                    analysis_text = context["document_text"] or context["summary"]
+                    if not analysis_text:
+                        raise ValueError("No document content available for analysis.")
+                    file_type = context.get("file_type", "")
+                    if file_path and file_type in {"csv", "xlsx", "xls"}:
+                        analysis_result = business_analytics_service.parse_and_analyze_data(
+                            file_path, context["document_name"]
+                        )
+                    else:
+                        prompt = (
+                            f"Perform a strategic AI business analysis on this content:\n\n{analysis_text}\n\n"
+                            "Identify: 1) Key Risks, 2) Opportunities, 3) Actionable Recommendations."
+                        )
+                        analysis_result = self.summarizer._call_gemini_api(prompt).strip()
+                    context["analysis_result"] = analysis_result
+                    context["business_analysis"] = analysis_result
                     context["last_output"] = analysis_result
+                    context["email_body"] = analysis_result
                     step_output = {
                         "step": idx,
                         "action_type": action_type,
@@ -153,13 +242,13 @@ class WorkflowEngineService:
             # Workflow complete
             run.status = "completed"
             run.completed_at = datetime.datetime.utcnow()
-            run.result = {"steps": step_results, "context": {"document_title": context["document_title"]}}
+            run.result = {"steps": step_results, "context": context}
             run.error_message = None
 
         except Exception as exc:
             run.status = "failed"
             run.completed_at = datetime.datetime.utcnow()
-            run.result = {"steps": step_results}
+            run.result = {"steps": step_results, "context": context}
             run.error_message = f"Workflow execution error: {str(exc)}"
 
         db.commit()

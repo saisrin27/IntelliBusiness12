@@ -21,6 +21,47 @@ body.dashboard-body {
     overflow-x: hidden;
 }
 
+body.dashboard-body.dark-mode {
+    background-color: #111827;
+    color: #F3F4F6;
+}
+
+body.dashboard-body.dark-mode .sidebar-wrapper,
+body.dashboard-body.dark-mode .topbar-wrapper {
+    background-color: #1F2937;
+    border-color: #374151;
+}
+
+body.dashboard-body.dark-mode .sidebar-brand-text,
+body.dashboard-body.dark-mode .topbar-title,
+body.dashboard-body.dark-mode .sidebar-nav-item,
+body.dashboard-body.dark-mode .text-dark,
+body.dashboard-body.dark-mode h1,
+body.dashboard-body.dark-mode h2,
+body.dashboard-body.dark-mode h3,
+body.dashboard-body.dark-mode h4,
+body.dashboard-body.dark-mode h5,
+body.dashboard-body.dark-mode h6 {
+    color: #F3F4F6 !important;
+}
+
+body.dashboard-body.dark-mode .sidebar-footer,
+body.dashboard-body.dark-mode .card,
+body.dashboard-body.dark-mode .stat-card,
+body.dashboard-body.dark-mode .list-group-item,
+body.dashboard-body.dark-mode .dropdown-menu {
+    background-color: #1F2937;
+    border-color: #374151;
+}
+
+body.dashboard-body.dark-mode .form-control,
+body.dashboard-body.dark-mode .form-select,
+body.dashboard-body.dark-mode .input-group-text {
+    background-color: #374151;
+    border-color: #4B5563;
+    color: #F3F4F6;
+}
+
 /* ============================================
    SIDEBAR NAVIGATION (DESKTOP)
    ============================================ */
@@ -59,6 +100,26 @@ body.dashboard-body {
     font-size: 1.2rem;
     margin-right: 0.75rem;
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.brand-logo-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.navbar-brand .brand-logo-image {
+    width: 34px;
+    height: 34px;
+}
+
+.summary-eyebrow .brand-logo-image {
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 0.5rem;
 }
 
 .sidebar-brand-text {
@@ -151,6 +212,34 @@ body.dashboard-body {
     padding: 1rem 0.75rem;
     border-top: 1px solid var(--card-border);
     background-color: #FAFAFA;
+}
+
+#profileModal .list-group-item {
+    align-items: center;
+    display: flex !important;
+    gap: 1rem;
+    justify-content: space-between;
+    min-height: 56px;
+}
+
+#profileModal .list-group-item > span:first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+#profileModal .list-group-item > span:last-child {
+    flex: 0 0 auto;
+    margin-left: auto;
+    max-width: 65%;
+    text-align: right;
+    white-space: nowrap;
+}
+
+#profileModal .list-group-item .badge {
+    align-items: center;
+    display: inline-flex !important;
+    justify-content: center;
+    line-height: 1.2;
 }
 
 /* ============================================

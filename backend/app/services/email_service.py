@@ -248,6 +248,18 @@ class SMTPSenderService:
                 "error": f"Unable to send email: {str(exc)}",
             }
 
+    def send_password_reset_otp(self, recipient_email: str, otp: str) -> Dict[str, Any]:
+        """Send a reset code through the central backend mailbox."""
+        return self.send_email(
+            recipient_email=recipient_email,
+            subject="IntelliBusiness Password Reset",
+            content=(
+                "Your password reset code is: " + otp +
+                "\n\nThis code will expire in 10 minutes."
+            ),
+            user_name="IntelliBusiness Security",
+        )
+
 
 
 email_generator_service = EmailGeneratorService()

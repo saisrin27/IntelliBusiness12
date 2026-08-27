@@ -26,6 +26,8 @@ class User(Base):
 
     analytics = relationship("Analytics", back_populates="owner", cascade="all, delete-orphan")
     history_items = relationship("History", back_populates="owner", cascade="all, delete-orphan")
+    password_reset_tokens = relationship("PasswordResetToken", back_populates="owner", cascade="all, delete-orphan")
+    settings = relationship("UserSettings", back_populates="owner", uselist=False, cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<User(id={self.id}, email='{self.email}', role='{self.role}')>"
@@ -226,5 +228,67 @@ class BusinessDataset(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     owner = relationship("User")
+
+
+class PasswordResetToken(Base):
+    __tablename__ = "password_reset_tokens"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    otp_hash = Column(String(64), nullable=False)
+    expires_at = Column(DateTime, nullable=False, index=True)
+    used = Column(Boolean, default=False, nullable=False)
+    attempts = Column(Integer, default=0, nullable=False)
+    verified_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    owner = relationship("User", back_populates="password_reset_tokens")
+
+
+class UserSettings(Base):
+    __tablename__ = "user_settings"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, unique=True, index=True)
+    profile_picture = Column(Text, nullable=True)
+    theme = Column(String(20), nullable=False, default="light")
+    ai_response_style = Column(String(20), nullable=False, default="balanced")
+    default_email_tone = Column(String(30), nullable=False, default="Professional")
+    email_notifications = Column(Boolean, nullable=False, default=True)
+    workflow_notifications = Column(Boolean, nullable=False, default=True)
+    document_notifications = Column(Boolean, nullable=False, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    owner = relationship("User", back_populates="settings")
+
+
+class AdminAutomation(Base):
+    __tablename__ = "admin_automations"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    name = Column(String(255), nullable=False)
+    trigger_type = Column(String(100), nullable=False, unique=True, index=True)
+    is_active = Column(Boolean, nullable=False, default=False)
+    email_subject = Column(String(500), nullable=False)
+    email_template = Column(Text, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    runs = relationship("AdminAutomationRun", back_populates="automation", cascade="all, delete-orphan")
+
+
+class AdminAutomationRun(Base):
+    __tablename__ = "admin_automation_runs"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    automation_id = Column(Integer, ForeignKey("admin_automations.id"), nullable=False, index=True)
+    triggered_user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    status = Column(String(30), nullable=False)
+    result = Column(Text, nullable=True)
+    error_message = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    automation = relationship("AdminAutomation", back_populates="runs")
 
 

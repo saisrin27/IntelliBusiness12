@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - IntelliBusiness</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/admin-dashboard.css">
+</head>
+<body class="dashboard-body admin-body">
+    <aside class="sidebar-wrapper admin-sidebar">
+        <a href="admin-dashboard.html" class="sidebar-brand">
+            <div class="sidebar-brand-logo"><img class="brand-logo-image" src="assets/images/intellibusiness-logo.svg" alt="IntelliBusiness"></div>
+            <span class="sidebar-brand-text">IntelliBusiness</span>
+        </a>
+        <div class="sidebar-menu">
+            <div class="sidebar-section-label">Administration</div>
+            <a href="admin-dashboard.html" class="sidebar-nav-item active"><i class="fas fa-chart-pie"></i><span>Overview</span></a>
+            <a href="#automationsSection" class="sidebar-nav-item"><i class="fas fa-cogs"></i><span>Automations</span></a>
+            <a href="#usersSection" class="sidebar-nav-item"><i class="fas fa-users"></i><span>Users</span></a>
+            <a href="#analyticsSection" class="sidebar-nav-item"><i class="fas fa-chart-line"></i><span>Analytics</span></a>
+            <a href="settings.html" class="sidebar-nav-item"><i class="fas fa-sliders"></i><span>Settings</span></a>
+        </div>
+        <div class="sidebar-footer">
+            <a href="#" class="sidebar-nav-item mb-1" data-bs-toggle="modal" data-bs-target="#passwordModal"><i class="fas fa-key"></i><span>Change Password</span></a>
+            <a href="#" class="sidebar-nav-item text-danger" id="adminLogout"><i class="fas fa-sign-out-alt text-danger"></i><span>Logout</span></a>
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="topbar-wrapper">
+            <div class="d-flex align-items-center gap-3">
+                <button class="mobile-toggle-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminMobileSidebar" aria-controls="adminMobileSidebar"><i class="fas fa-bars"></i></button>
+                <div><h1 class="topbar-title h5 font-bold m-0 text-dark">Admin Dashboard</h1><small class="text-muted">Platform health and usage overview</small></div>
+            </div>
+            <div class="admin-session-label"><i class="fas fa-shield-halved me-2"></i><span id="adminName">Administrator</span></div>
+        </header>
+
+        <main class="dashboard-content admin-content">
+            <div id="adminAlert" class="alert d-none" role="alert"></div>
+            <div class="admin-heading-row">
+                <div><p class="admin-eyebrow">Platform overview</p><h2>Operational Snapshot</h2><p class="text-muted mb-0">Aggregated activity across the IntelliBusiness platform.</p></div>
+                <button class="btn btn-outline-primary rounded-pill" id="refreshAdmin"><i class="fas fa-rotate me-2"></i>Refresh</button>
+            </div>
+
+            <section class="admin-stat-grid" aria-label="Platform overview metrics">
+                <article class="admin-stat"><span class="admin-stat-icon blue"><i class="fas fa-users"></i></span><span class="admin-stat-label">Total Users</span><strong id="totalUsers">0</strong></article>
+                <article class="admin-stat"><span class="admin-stat-icon green"><i class="fas fa-user-check"></i></span><span class="admin-stat-label">Active Users</span><strong id="activeUsers">0</strong></article>
+                <article class="admin-stat"><span class="admin-stat-icon violet"><i class="fas fa-diagram-project"></i></span><span class="admin-stat-label">Total Workflows</span><strong id="totalWorkflows">0</strong></article>
+                <article class="admin-stat"><span class="admin-stat-icon amber"><i class="fas fa-spinner"></i></span><span class="admin-stat-label">Running Workflows</span><strong id="runningWorkflows">0</strong></article>
+                <article class="admin-stat"><span class="admin-stat-icon green"><i class="fas fa-circle-check"></i></span><span class="admin-stat-label">Completed Workflows</span><strong id="completedWorkflows">0</strong></article>
+                <article class="admin-stat"><span class="admin-stat-icon red"><i class="fas fa-circle-xmark"></i></span><span class="admin-stat-label">Failed Workflows</span><strong id="failedWorkflows">0</strong></article>
+                <article class="admin-stat"><span class="admin-stat-icon blue"><i class="fas fa-wand-magic-sparkles"></i></span><span class="admin-stat-label">Total AI Usage</span><strong id="totalAiUsage">0</strong></article>
+                <article class="admin-stat"><span class="admin-stat-icon violet"><i class="fas fa-percent"></i></span><span class="admin-stat-label">AI Usage Percentage</span><strong id="aiUsagePercentage">0%</strong></article>
+            </section>
+
+            <section id="analyticsSection" class="admin-panel-grid">
+                <article class="admin-panel"><div class="admin-panel-heading"><div><h3>User Growth</h3><p>New accounts by day</p></div></div><canvas id="userGrowthChart"></canvas></article>
+                <article class="admin-panel"><div class="admin-panel-heading"><div><h3>AI Usage Over Time</h3><p>Aggregated AI feature events</p></div></div><canvas id="aiUsageChart"></canvas></article>
+                <article class="admin-panel"><div class="admin-panel-heading"><div><h3>Workflow Status</h3><p>Run distribution</p></div></div><canvas id="workflowStatusChart"></canvas></article>
+                <article class="admin-panel"><div class="admin-panel-heading"><div><h3>Workflow Activity</h3><p>Runs started by day</p></div></div><canvas id="workflowActivityChart"></canvas></article>
+            </section>
+
+            <section id="automationsSection" class="admin-panel">
+                <div class="admin-panel-heading">
+                    <div>
+                        <h3>Admin Automations</h3>
+                        <p>Platform-level automations (e.g., welcome emails, user management)</p>
+                    </div>
+                </div>
+
+                <div class="automations-container">
+                    <div id="automationsAlert" class="alert d-none" role="alert"></div>
+
+                    <div class="automations-list" id="automationsList">
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-spinner fa-spin"></i> Loading automations...
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="usersSection" class="admin-panel users-panel">
+                <div class="admin-panel-heading users-heading"><div><h3>Platform Users</h3><p><span id="userCount">0</span> accounts, basic account information only</p></div><div class="user-search"><i class="fas fa-search"></i><input id="userSearch" type="search" placeholder="Search users" aria-label="Search users"></div></div>
+                <div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th>User Name</th><th>Email</th><th>Company</th><th>Created</th><th>Status</th></tr></thead><tbody id="usersTable"><tr><td colspan="5" class="text-center text-muted py-4">Loading users...</td></tr></tbody></table></div>
+                <div class="users-pagination"><span id="pageLabel">Page 1</span><div><button class="btn btn-sm btn-outline-secondary" id="previousPage" disabled>Previous</button><button class="btn btn-sm btn-outline-secondary ms-2" id="nextPage" disabled>Next</button></div></div>
+            </section>
+        </main>
+    </div>
+
+    <div class="offcanvas offcanvas-start offcanvas-sidebar" tabindex="-1" id="adminMobileSidebar" aria-labelledby="adminMobileSidebarLabel">
+        <div class="offcanvas-header border-bottom"><h5 class="offcanvas-title fw-bold" id="adminMobileSidebarLabel">Admin Console</h5><button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button></div>
+        <div class="offcanvas-body p-0 d-flex flex-column"><div class="sidebar-menu"><a href="admin-dashboard.html" class="sidebar-nav-item active"><i class="fas fa-chart-pie"></i><span>Overview</span></a><a href="#automationsSection" class="sidebar-nav-item" data-bs-dismiss="offcanvas"><i class="fas fa-cogs"></i><span>Automations</span></a><a href="#usersSection" class="sidebar-nav-item" data-bs-dismiss="offcanvas"><i class="fas fa-users"></i><span>Users</span></a><a href="#analyticsSection" class="sidebar-nav-item" data-bs-dismiss="offcanvas"><i class="fas fa-chart-line"></i><span>Analytics</span></a><a href="settings.html" class="sidebar-nav-item"><i class="fas fa-sliders"></i><span>Settings</span></a></div><div class="sidebar-footer"><a href="#" class="sidebar-nav-item mb-1" data-bs-toggle="modal" data-bs-target="#passwordModal"><i class="fas fa-key"></i><span>Change Password</span></a><a href="#" class="sidebar-nav-item text-danger" id="adminLogoutMobile"><i class="fas fa-sign-out-alt text-danger"></i><span>Logout</span></a></div></div>
+    </div>
+
+    <div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4"><div class="modal-header border-0"><h5 class="modal-title fw-bold" id="passwordModalLabel">Change Admin Password</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><form id="passwordForm"><div class="modal-body"><div id="passwordAlert" class="alert d-none"></div><label class="form-label">Current password</label><input class="form-control mb-3" type="password" id="currentPassword" required><label class="form-label">New password</label><input class="form-control mb-3" type="password" id="newPassword" minlength="6" required><label class="form-label">Confirm new password</label><input class="form-control" type="password" id="confirmPassword" minlength="6" required></div><div class="modal-footer border-0"><button type="button" class="btn btn-light rounded-pill" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary rounded-pill" type="submit">Update Password</button></div></form></div></div></div>
+
+    <div class="modal fade" id="automationModal" tabindex="-1" aria-labelledby="automationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold" id="automationModalLabel">Edit Admin Automation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="automationForm">
+                    <div class="modal-body">
+                        <input type="hidden" id="editAutomationId">
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-bold">Email Subject</label>
+                            <input type="text" class="form-control" id="editSubject" required>
+                            <small class="text-muted">The subject line for the automation email</small>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-bold">Email Template</label>
+                            <textarea class="form-control" id="editTemplate" rows="8" required></textarea>
+                            <small class="text-muted">Use {user_name}, {email}, {company_name} as placeholders</small>
+                        </div>
+                        <div class="alert alert-info small">
+                            <strong>Available placeholders:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li><code>{user_name}</code> - Full name of the user</li>
+                                <li><code>{email}</code> - Email address of the user</li>
+                                <li><code>{company_name}</code> - Company name of the user</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-light rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary rounded-pill" id="saveAutomationBtn">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="historyModal" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold" id="historyModalLabel">Automation Run History</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Status</th>
+                                    <th>Result</th>
+                                    <th>Error</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyBody">
+                                <tr><td colspan="4" class="text-center text-muted py-4">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light rounded-pill" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/admin-dashboard.js"></script>
+</body>
+</html>

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from ..auth import get_current_user
 from ..database import get_db
-from ..models import ChatConversation, ChatMessage, User
+from ..models import ChatConversation, ChatMessage, User, UserSettings
 from ..schemas import ChatConversationResponse, ChatMessageResponse, ChatRequest, ChatResponse
 from ..services.rag_service import rag_service
 
@@ -54,11 +54,13 @@ def chat_with_assistant(
     history = [{"role": msg.role, "content": msg.content} for msg in existing_messages[-10:]]
 
     # 3. Generate RAG Answer across ALL documents belonging to current_user
+    settings = db.query(UserSettings).filter(UserSettings.user_id == current_user.id).first()
     rag_result = rag_service.generate_rag_answer(
         user_id=current_user.id,
         question=message_text,
         conversation_history=history,
         db=db,
+        response_style=settings.ai_response_style if settings else "balanced",
     )
 
     # 4. Save User question and Assistant answer to chat history

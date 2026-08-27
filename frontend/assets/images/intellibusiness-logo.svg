@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 768 768" role="img" aria-labelledby="title desc">
+  <title id="title">IntelliBusiness</title>
+  <desc id="desc">IntelliBusiness logo with a blue business chart inside a curved mark.</desc>
+  <defs>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#152b9b"/>
+      <stop offset="1" stop-color="#079df0"/>
+    </linearGradient>
+    <linearGradient id="word" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#10184c"/>
+      <stop offset="1" stop-color="#3721d8"/>
+    </linearGradient>
+  </defs>
+  <rect width="768" height="768" rx="110" fill="#fff"/>
+  <path d="M360 58C211 69 120 184 139 315c20 141 150 231 302 227 113-3 192-58 201-144-34 72-106 105-196 105-130 0-241-78-267-184C155 192 238 91 360 58Z" fill="#101751"/>
+  <path d="M190 393c53 112 189 169 331 140 74-15 126-54 145-118-19 91-87 143-183 160-153 28-291-43-340-157Z" fill="url(#blue)"/>
+  <circle cx="323" cy="140" r="34" fill="url(#blue)"/>
+  <path d="M292 181h66v293l-66-31Z" fill="#0c154b"/>
+  <path d="M388 181h108c63 0 99 34 99 78 0 30-15 52-43 65 35 10 56 36 56 69 0 47-41 81-105 81H388v-59l70-39h44c22 0 35-10 35-27 0-17-13-27-35-27h-44v60l-70 39Z" fill="url(#blue)"/>
+  <path d="M422 425h35v51h-35Zm49-16h35v67h-35Zm49-30h35v97h-35Z" fill="#20baf0"/>
+  <path d="m384 431 67-40 24 17 66-49" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="square"/>
+  <path d="m524 356 39-11-11 39Z" fill="#fff"/>
+  <g fill="url(#blue)"><rect x="206" y="247" width="20" height="20" rx="2"/><rect x="229" y="270" width="25" height="25" rx="2"/><rect x="254" y="222" width="20" height="27" rx="2"/><rect x="206" y="300" width="24" height="22" rx="2"/><rect x="231" y="326" width="24" height="23" rx="2"/><rect x="258" y="277" width="20" height="22" rx="2"/></g>
+  <text x="67" y="630" font-family="Arial, sans-serif" font-size="70" font-weight="700" fill="url(#word)">IntelliBusiness</text>
+  <path d="M82 675h73m540 0h-68" stroke="#168ef0" stroke-width="3"/>
+  <text x="175" y="685" font-family="Arial, sans-serif" font-size="27" letter-spacing="8" fill="#394052">AI  &#8226;  AUTOMATE  &#8226;  GROW</text>
+</svg>

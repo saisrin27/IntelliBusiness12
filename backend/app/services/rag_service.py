@@ -280,6 +280,7 @@ class RAGService:
         question: str,
         conversation_history: Optional[List[Dict[str, str]]] = None,
         db: Optional[Session] = None,
+        response_style: str = "balanced",
     ) -> Dict[str, Any]:
         """Perform automatic RAG across ALL completed documents for user_id and generate direct answer."""
         if db:
@@ -342,6 +343,7 @@ class RAGService:
             "9. Prefer 1 to 4 short paragraphs.\n"
             "10. If the answer can be given in one sentence, do so.\n"
             "11. Use bullet points only when they improve clarity.\n\n"
+            f"Response style preference: {response_style}. Adjust answer length and detail accordingly.\n\n"
             "If the information is not available in the provided context, say:\n"
             "'I couldn't find that information in your uploaded documents.'\n\n"
             f"{history_text}"

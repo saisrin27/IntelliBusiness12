@@ -19,6 +19,22 @@ class ForgotPasswordRequest(BaseModel):
     email: EmailStr = Field(..., example="jane.doe@example.com")
 
 
+class VerifyResetOtpRequest(BaseModel):
+    email: EmailStr
+    otp: str = Field(..., min_length=6, max_length=6, pattern=r"^\d{6}$")
+
+
+class ResetPasswordRequest(BaseModel):
+    reset_token: str = Field(..., min_length=20)
+    new_password: str = Field(..., min_length=6, max_length=128)
+    confirm_password: str = Field(..., min_length=6, max_length=128)
+
+
+class ResetOtpResponse(BaseModel):
+    message: str
+    reset_token: str
+
+
 class UserResponse(BaseModel):
     id: int
     full_name: str
@@ -43,6 +59,44 @@ class TokenData(BaseModel):
 
 class MessageResponse(BaseModel):
     message: str
+
+
+class SettingsProfileResponse(BaseModel):
+    full_name: str
+    company_name: str
+    email: str
+    role: str
+    profile_picture: Optional[str] = None
+
+
+class SettingsProfileUpdate(BaseModel):
+    full_name: str = Field(..., min_length=2, max_length=255)
+    company_name: str = Field(..., min_length=2, max_length=255)
+    profile_picture: Optional[str] = None
+
+
+class SettingsPreferencesResponse(BaseModel):
+    theme: str = "light"
+    ai_response_style: str
+    default_email_tone: str
+    email_notifications: bool
+    workflow_notifications: bool
+    document_notifications: bool
+
+
+class SettingsPreferencesUpdate(BaseModel):
+    theme: str = Field(default="light", pattern="^light$")
+    ai_response_style: str = Field(default="balanced", pattern="^(concise|balanced|detailed)$")
+    default_email_tone: str = Field(default="Professional", pattern="^(Professional|Friendly|Formal)$")
+    email_notifications: bool = True
+    workflow_notifications: bool = True
+    document_notifications: bool = True
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str = Field(..., min_length=1)
+    new_password: str = Field(..., min_length=6, max_length=128)
+    confirm_password: str = Field(..., min_length=6, max_length=128)
 
 
 # ============================================
@@ -203,6 +257,43 @@ class EmailResponse(BaseModel):
     error_message: Optional[str] = None
     created_at: datetime
     sent_at: Optional[datetime] = None
+
+
+class AdminAutomationUpdate(BaseModel):
+    is_active: bool
+    email_subject: str = Field(..., min_length=1, max_length=500)
+    email_template: str = Field(..., min_length=1)
+
+
+class AdminAutomationResponse(BaseModel):
+    id: int
+    name: str
+    trigger_type: str
+    is_active: bool
+    email_subject: str
+    email_template: str
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class AdminAutomationRunResponse(BaseModel):
+    id: int
+    automation_id: int
+    triggered_user_id: int
+    status: str
+    result: Optional[str] = None
+    error_message: Optional[str] = None
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class AdminAutomationTestRequest(BaseModel):
+    recipient_email: EmailStr
 
     class Config:
         from_attributes = True

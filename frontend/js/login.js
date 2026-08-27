@@ -4,12 +4,24 @@
 
 const API_BASE_URL = 'http://127.0.0.1:8000';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // Redirect to dashboard if already logged in
     const existingToken = localStorage.getItem('access_token');
     if (existingToken) {
-        window.location.href = 'dashboard.html';
-        return;
+        try {
+            const profileResponse = await fetch(`${API_BASE_URL}/api/auth/profile`, {
+                headers: { 'Authorization': `Bearer ${existingToken}` }
+            });
+            if (!profileResponse.ok) throw new Error('Stored session is invalid');
+            const storedUser = await profileResponse.json();
+            localStorage.setItem('user', JSON.stringify(storedUser));
+            window.location.href = storedUser.role === 'admin' ? 'admin-dashboard.html' : 'dashboard.html';
+            return;
+        } catch (error) {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('user');
+            localStorage.removeItem('user_data');
+        }
     }
 
     const loginForm = document.getElementById('loginForm');
@@ -87,9 +99,15 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('user', JSON.stringify(data.user));
 
             showSuccess('Login successful! Redirecting to your dashboard...');
-            
+
+            const profileResponse = await fetch(`${API_BASE_URL}/api/auth/profile`, {
+                headers: { 'Authorization': `Bearer ${data.access_token}` }
+            });
+            const profile = profileResponse.ok ? await profileResponse.json() : data.user;
+            localStorage.setItem('user', JSON.stringify(profile));
+
             setTimeout(() => {
-                window.location.href = 'dashboard.html';
+                window.location.href = profile.role === 'admin' ? 'admin-dashboard.html' : 'dashboard.html';
             }, 1000);
 
         } catch (error) {

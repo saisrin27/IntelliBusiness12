@@ -27,7 +27,7 @@
     <aside class="sidebar-wrapper">
         <a href="dashboard.html" class="sidebar-brand">
             <div class="sidebar-brand-logo">
-                <i class="fas fa-brain"></i>
+                <img class="brand-logo-image" src="assets/images/intellibusiness-logo.svg" alt="IntelliBusiness">
             </div>
             <span class="sidebar-brand-text">IntelliBusiness</span>
         </a>
@@ -74,18 +74,63 @@
         </div>
 
         <div class="sidebar-footer">
-            <div class="sidebar-user-card mb-2">
-                <div class="sidebar-user-avatar" id="sidebarUserAvatar">U</div>
-                <div class="sidebar-user-info">
-                    <div class="sidebar-user-name" id="sidebarUserName">User Name</div>
-                    <div class="sidebar-user-role" id="sidebarUserRole">Administrator</div>
-                </div>
-            </div>
-            <button class="btn btn-outline-danger btn-sm w-100 rounded-pill" id="logoutBtn">
-                <i class="fas fa-sign-out-alt me-1"></i> Logout
-            </button>
+            <a href="settings.html" class="sidebar-nav-item mb-1"><i class="fas fa-sliders"></i><span>Settings</span></a>
+            <a href="#" class="sidebar-nav-item mb-1" data-bs-toggle="modal" data-bs-target="#profileModal">
+                <i class="fas fa-user-circle"></i>
+                <span>My Profile</span>
+            </a>
+            <a href="#" class="sidebar-nav-item text-danger" id="btnLogoutSidebar">
+                <i class="fas fa-sign-out-alt text-danger"></i>
+                <span>Logout</span>
+            </a>
         </div>
     </aside>
+
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-dark" id="profileModalLabel">My Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="text-center mb-3"><div class="avatar-circle mx-auto" id="profileModalAvatar">IB</div></div>
+                    <div class="row g-3">
+                        <div class="col-12"><strong>Name:</strong> <span id="profileModalName">-</span></div>
+                        <div class="col-12"><strong>Company:</strong> <span id="profileModalCompany">-</span></div>
+                        <div class="col-12"><strong>Email:</strong> <span id="profileModalEmail">-</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="offcanvas offcanvas-start offcanvas-sidebar" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel">
+        <div class="offcanvas-header border-bottom">
+            <h5 class="offcanvas-title fw-bold" id="mobileSidebarLabel">IntelliBusiness</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-0 d-flex flex-column">
+            <div class="sidebar-menu">
+                <a href="dashboard.html" class="sidebar-nav-item"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+                <a href="documents.html" class="sidebar-nav-item"><i class="fas fa-folder-open"></i><span>Documents</span></a>
+                <a href="ai-assistant.html" class="sidebar-nav-item"><i class="fas fa-robot"></i><span>AI Assistant</span></a>
+                <a href="email-generator.html" class="sidebar-nav-item active"><i class="fas fa-paper-plane"></i><span>Email Generator</span></a>
+                <a href="business-analytics.html" class="sidebar-nav-item"><i class="fas fa-chart-line"></i><span>Business Analytics</span></a>
+                <a href="analytics.html" class="sidebar-nav-item"><i class="fas fa-chart-bar"></i><span>System Analytics</span></a>
+                <a href="workflows.html" class="sidebar-nav-item"><i class="fas fa-network-wired"></i><span>Workflows</span></a>
+            </div>
+            <div class="sidebar-footer">
+                <a href="settings.html" class="sidebar-nav-item mb-1"><i class="fas fa-sliders"></i><span>Settings</span></a>
+                <a href="#" class="sidebar-nav-item mb-1" data-bs-toggle="modal" data-bs-target="#profileModal">
+                    <i class="fas fa-user-circle"></i><span>My Profile</span>
+                </a>
+                <a href="#" class="sidebar-nav-item text-danger" id="btnLogoutMobile">
+                    <i class="fas fa-sign-out-alt text-danger"></i><span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </div>
 
     <!-- ============================================
          2. MAIN WRAPPER CONTAINER

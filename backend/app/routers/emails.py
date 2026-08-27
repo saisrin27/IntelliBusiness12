@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from ..auth import get_current_user
 from ..database import get_db
-from ..models import Email, User
+from ..models import Email, User, UserSettings
 from ..schemas import (
     EmailGenerateRequest,
     EmailImproveRequest,
@@ -26,16 +26,21 @@ router = APIRouter(prefix="/api/emails", tags=["Email Generator & Sender"])
 def generate_email(
     req: EmailGenerateRequest,
     current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
     if not req.purpose or not req.purpose.strip():
         raise HTTPException(status_code=400, detail="Please enter an email purpose or description.")
 
     user_name = current_user.full_name or "User"
+    settings = db.query(UserSettings).filter(UserSettings.user_id == current_user.id).first()
+    tone = req.tone
+    if settings and req.tone == "Professional":
+        tone = settings.default_email_tone
     result = email_generator_service.generate_email(
         purpose=req.purpose.strip(),
         recipient_name=req.recipient_name.strip() if req.recipient_name else "",
         recipient_email=req.recipient_email.strip() if req.recipient_email else "",
-        tone=req.tone,
+        tone=tone,
         length=req.length,
         user_name=user_name,
     )

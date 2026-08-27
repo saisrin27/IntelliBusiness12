@@ -116,14 +116,13 @@ function enqueueFiles(files) {
     const errors = [];
 
     for (const file of files) {
-        const extension = `.${file.name.split('.').pop().toLowerCase()}`;
-        const allowed = ['.pdf', '.docx', '.pptx', '.xlsx', '.txt'];
-        if (!allowed.includes(extension)) {
-            errors.push(`${file.name}: unsupported file type.`);
+        const filename = String(file.name || '').trim();
+        if (!filename) {
+            errors.push('A selected file has no filename.');
             continue;
         }
-        if (file.size > 10 * 1024 * 1024) {
-            errors.push(`${file.name}: file is larger than 10 MB.`);
+        if (file.size > 100 * 1024 * 1024) {
+            errors.push(`${filename}: file is larger than 100 MB.`);
             continue;
         }
         valid.push(file);

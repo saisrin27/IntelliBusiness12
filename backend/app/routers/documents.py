@@ -24,20 +24,15 @@ from ..services.summarization_service import SummarizationService
 
 router = APIRouter(prefix="/api/documents", tags=["Documents"])
 
-ALLOWED_EXTENSIONS = {
-    ".pdf": "pdf",
-    ".docx": "docx",
-    ".txt": "txt",
-    ".xlsx": "xlsx",
-    ".pptx": "pptx",
-}
-MAX_FILE_SIZE = 10 * 1024 * 1024
+MAX_FILE_SIZE = 100 * 1024 * 1024
 UPLOAD_ROOT = Path(__file__).resolve().parent.parent.parent / "uploads"
 VIEW_MEDIA_TYPES = {
+    "csv": "text/csv",
     "pdf": "application/pdf",
     "txt": "text/plain; charset=utf-8",
     "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "xls": "application/vnd.ms-excel",
     "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
 }
 
@@ -55,12 +50,10 @@ def save_upload_file(file: UploadFile, user_id: int) -> tuple[str, Path, int]:
 
     original_name = safe_filename(file.filename or "document")
     extension = Path(original_name).suffix.lower()
-    if extension not in ALLOWED_EXTENSIONS:
-        raise HTTPException(status_code=400, detail="Unsupported file type. Allowed: PDF, DOCX, PPTX, XLSX, TXT.")
 
     contents = file.file.read()
     if len(contents) > MAX_FILE_SIZE:
-        raise HTTPException(status_code=400, detail="File exceeds the 10 MB limit.")
+        raise HTTPException(status_code=400, detail="File exceeds the 100 MB limit.")
 
     unique_name = f"{uuid.uuid4().hex}{extension}"
     file_path = user_folder / unique_name
@@ -198,7 +191,7 @@ def upload_documents(
             filename=file_path.name,
             original_filename=original_name,
             file_path=str(file_path),
-            file_type=ALLOWED_EXTENSIONS.get(Path(original_name).suffix.lower(), "txt"),
+            file_type=Path(original_name).suffix.lower().lstrip(".") or "unknown",
             file_size=file_size,
             processing_status="processing",
             processing_error=None,
@@ -217,6 +210,7 @@ def upload_documents(
                     "document_id": doc.id,
                     "original_filename": original_name,
                     "file_path": str(file_path),
+                    "file_type": doc.file_type,
                 },
                 db=db,
             )
@@ -235,6 +229,7 @@ def upload_documents(
                         "document_id": doc.id,
                         "original_filename": original_name,
                         "file_path": str(file_path),
+                        "file_type": doc.file_type,
                     },
                     db=db,
                 )

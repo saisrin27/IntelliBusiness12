@@ -24,14 +24,15 @@ function checkAuth() {
 }
 
 function loadUserProfile() {
-    const userStr = localStorage.getItem('user_data');
+    const userStr = localStorage.getItem('user') || localStorage.getItem('user_data');
     if (userStr) {
         try {
             const user = JSON.parse(userStr);
             const name = user.full_name || 'User';
-            document.getElementById('sidebarUserName').textContent = name;
-            document.getElementById('sidebarUserRole').textContent = (user.role || 'User').toUpperCase();
-            document.getElementById('sidebarUserAvatar').textContent = name.charAt(0).toUpperCase();
+            document.getElementById('profileModalName').textContent = name;
+            document.getElementById('profileModalCompany').textContent = user.company_name || '-';
+            document.getElementById('profileModalEmail').textContent = user.email || '-';
+            document.getElementById('profileModalAvatar').textContent = name.charAt(0).toUpperCase();
         } catch (e) {
             console.error('Error parsing user_data:', e);
         }
@@ -39,10 +40,11 @@ function loadUserProfile() {
 }
 
 function bindEvents() {
-    const logoutBtn = document.getElementById('logoutBtn');
+    const logoutBtn = document.getElementById('btnLogoutSidebar');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
             localStorage.removeItem('access_token');
+            localStorage.removeItem('user');
             localStorage.removeItem('user_data');
             window.location.href = 'login.html';
         });

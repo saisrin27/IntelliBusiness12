@@ -24,60 +24,43 @@ document.addEventListener('DOMContentLoaded', function () {
     initializeScrollAnimations();
     initializeNavbarHighlight();
     initializeBackToTop();
-    initializeDarkMode();
     initializeContactForm();
     initializeSmoothScroll();
+    initializeHeroStats();
 });
 
-// ============================================
-// DARK MODE TOGGLE
-// ============================================
-
-/**
- * Initialize dark mode functionality
- */
-function initializeDarkMode() {
-    const darkModeToggle = document.getElementById('darkModeToggle');
-    const htmlElement = document.documentElement;
-    const body = document.body;
-    
-    // Check for saved dark mode preference
-    const isDarkMode = localStorage.getItem('darkMode') === 'true';
-    
-    if (isDarkMode) {
-        enableDarkMode();
-    }
-    
-    // Dark mode toggle click handler
-    if (darkModeToggle) {
-        darkModeToggle.addEventListener('click', function () {
-            if (body.classList.contains('dark-mode')) {
-                disableDarkMode();
-            } else {
-                enableDarkMode();
+async function initializeHeroStats() {
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/public/stats');
+            if (!response.ok) {
+                throw new Error('Unable to load public statistics.');
             }
-        });
-    }
-    
-    // Function to enable dark mode
-    function enableDarkMode() {
-        body.classList.add('dark-mode');
-        localStorage.setItem('darkMode', 'true');
-        if (darkModeToggle) {
-            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-            darkModeToggle.title = 'Toggle Light Mode';
+
+            const stats = await response.json();
+            document.getElementById('registeredUsers').textContent = stats.registered_users.toLocaleString();
+            document.getElementById('uploadedDocuments').textContent = stats.uploaded_documents.toLocaleString();
+            document.getElementById('apiUptime').textContent = formatUptime(stats.uptime_seconds);
+            return;
+        } catch (error) {
+            if (attempt === 2) {
+                console.error('Unable to load hero statistics:', error);
+                return;
+            }
+            await new Promise(resolve => setTimeout(resolve, 1000));
         }
     }
-    
-    // Function to disable dark mode
-    function disableDarkMode() {
-        body.classList.remove('dark-mode');
-        localStorage.setItem('darkMode', 'false');
-        if (darkModeToggle) {
-            darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-            darkModeToggle.title = 'Toggle Dark Mode';
-        }
-    }
+}
+
+function formatUptime(uptimeSeconds) {
+    const totalMinutes = Math.floor(uptimeSeconds / 60);
+    const days = Math.floor(totalMinutes / 1440);
+    const hours = Math.floor((totalMinutes % 1440) / 60);
+    const minutes = totalMinutes % 60;
+
+    if (days > 0) return `${days}d ${hours}h`;
+    if (hours > 0) return `${hours}h ${minutes}m`;
+    return `${minutes}m`;
 }
 
 // ============================================

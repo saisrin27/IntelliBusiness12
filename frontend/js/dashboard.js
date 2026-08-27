@@ -14,6 +14,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
         const user = await fetchUserProfile(token);
+        if (user.role === 'admin') {
+            window.location.href = 'admin-dashboard.html';
+            return;
+        }
         renderUserInfo(user);
         initGreeting(user.full_name);
         

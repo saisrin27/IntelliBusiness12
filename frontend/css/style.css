@@ -187,6 +187,12 @@ body.dark-mode .footer {
     font-size: 1.8rem;
 }
 
+.navbar-brand .brand-logo-image {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+}
+
 .nav-link-custom {
     color: var(--text-dark) !important;
     font-weight: 500;

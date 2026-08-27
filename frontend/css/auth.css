@@ -71,6 +71,12 @@
     margin-bottom: 0.75rem;
 }
 
+.auth-brand .brand-logo-image {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+}
+
 .auth-title {
     font-size: 1.5rem;
     font-weight: 600;

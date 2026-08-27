@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - IntelliBusiness</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/dashboard.css"><link rel="stylesheet" href="css/settings.css">
+</head>
+<body class="dashboard-body settings-body">
+    <!-- Regular User Sidebar -->
+    <aside class="sidebar-wrapper" id="userSidebar"><a href="dashboard.html" class="sidebar-brand"><div class="sidebar-brand-logo"><img class="brand-logo-image" src="assets/images/intellibusiness-logo.svg" alt="IntelliBusiness"></div><span class="sidebar-brand-text">IntelliBusiness</span></a><div class="sidebar-menu"><div class="sidebar-section-label">Main Menu</div><a href="dashboard.html" class="sidebar-nav-item"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a><a href="documents.html" class="sidebar-nav-item"><i class="fas fa-folder-open"></i><span>Documents</span></a><a href="ai-assistant.html" class="sidebar-nav-item"><i class="fas fa-robot"></i><span>AI Assistant</span></a><a href="email-generator.html" class="sidebar-nav-item"><i class="fas fa-paper-plane"></i><span>Email Generator</span></a><a href="business-analytics.html" class="sidebar-nav-item"><i class="fas fa-chart-line"></i><span>Business Analytics</span></a><a href="analytics.html" class="sidebar-nav-item"><i class="fas fa-chart-bar"></i><span>System Analytics</span></a><a href="workflows.html" class="sidebar-nav-item"><i class="fas fa-network-wired"></i><span>Workflows</span></a><a href="settings.html" class="sidebar-nav-item active"><i class="fas fa-sliders"></i><span>Settings</span></a></div><div class="sidebar-footer"><a href="#" class="sidebar-nav-item text-danger" id="logoutBtn"><i class="fas fa-sign-out-alt text-danger"></i><span>Logout</span></a></div></aside>
+
+    <!-- Admin Sidebar (Hidden by default) -->
+    <aside class="sidebar-wrapper admin-sidebar d-none" id="adminSidebar">
+        <a href="admin-dashboard.html" class="sidebar-brand">
+            <div class="sidebar-brand-logo"><img class="brand-logo-image" src="assets/images/intellibusiness-logo.svg" alt="IntelliBusiness"></div>
+            <span class="sidebar-brand-text">IntelliBusiness</span>
+        </a>
+        <div class="sidebar-menu">
+            <div class="sidebar-section-label">Administration</div>
+            <a href="admin-dashboard.html" class="sidebar-nav-item"><i class="fas fa-chart-pie"></i><span>Overview</span></a>
+            <a href="admin-dashboard.html#automationsSection" class="sidebar-nav-item"><i class="fas fa-cogs"></i><span>Automations</span></a>
+            <a href="admin-dashboard.html#usersSection" class="sidebar-nav-item"><i class="fas fa-users"></i><span>Users</span></a>
+            <a href="admin-dashboard.html#analyticsSection" class="sidebar-nav-item"><i class="fas fa-chart-line"></i><span>Analytics</span></a>
+            <a href="settings.html" class="sidebar-nav-item active"><i class="fas fa-sliders"></i><span>Settings</span></a>
+        </div>
+        <div class="sidebar-footer">
+            <a href="#" class="sidebar-nav-item text-danger" id="adminLogoutBtn"><i class="fas fa-sign-out-alt text-danger"></i><span>Logout</span></a>
+        </div>
+    </aside>
+    <div class="main-wrapper"><header class="topbar-wrapper"><div class="d-flex align-items-center gap-3"><button class="mobile-toggle-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar"><i class="fas fa-bars"></i></button><div><h1 class="topbar-title h5 font-bold m-0 text-dark">Settings</h1><small class="text-muted">Manage your IntelliBusiness account</small></div></div></header>
+        <main class="dashboard-content settings-content"><div id="settingsAlert" class="alert d-none" role="alert"></div><div class="settings-intro"><p class="settings-eyebrow">Account control</p><h2>Settings</h2><p class="text-muted">Update your profile, preferences, and security.</p></div>
+            <section class="settings-section"><div class="settings-section-heading"><span class="settings-icon blue"><i class="fas fa-user"></i></span><div><h3>Profile Settings</h3><p>Manage your personal and company information.</p></div></div><form id="profileForm"><div class="profile-picture-row"><div class="profile-picture" id="profilePicturePreview">U</div><div><input type="file" id="profilePictureInput" accept="image/png,image/jpeg,image/webp" hidden><button type="button" class="btn btn-outline-primary btn-sm rounded-pill" id="choosePicture"><i class="fas fa-camera me-1"></i> Change picture</button><div class="small text-muted mt-2">PNG, JPEG, or WebP up to 2 MB</div></div></div><div class="row g-3"><div class="col-md-6"><label class="form-label">Full Name</label><input class="form-control" id="fullName" required minlength="2"></div><div class="col-md-6"><label class="form-label">Company Name</label><input class="form-control" id="companyName" required minlength="2"></div><div class="col-md-6"><label class="form-label">Email</label><input class="form-control" id="email" readonly></div></div><button class="btn btn-primary rounded-pill mt-4" type="submit" id="saveProfile"><i class="fas fa-save me-2"></i>Save Profile</button></form></section>
+            <section class="settings-section"><div class="settings-section-heading"><span class="settings-icon green"><i class="fas fa-wand-magic-sparkles"></i></span><div><h3>AI Preferences</h3><p>Set defaults for AI responses and generated emails.</p></div></div><div class="row g-3"><div class="col-md-6"><label class="form-label">Default AI response style</label><select class="form-select" id="aiResponseStyle"><option value="concise">Concise</option><option value="balanced">Balanced</option><option value="detailed">Detailed</option></select></div><div class="col-md-6"><label class="form-label">Default email tone</label><select class="form-select" id="emailTone"><option>Professional</option><option>Friendly</option><option>Formal</option></select></div></div><button class="btn btn-primary rounded-pill mt-4" id="savePreferences"><i class="fas fa-save me-2"></i>Save AI Preferences</button></section>
+            <section class="settings-section"><div class="settings-section-heading"><span class="settings-icon amber"><i class="fas fa-bell"></i></span><div><h3>Notifications</h3><p>Choose which account events can notify you.</p></div></div><div class="toggle-list"><label><span><strong>Email Notifications</strong><small>Account and service updates</small></span><input type="checkbox" id="emailNotifications"><i></i></label><label><span><strong>Workflow Notifications</strong><small>Workflow execution updates</small></span><input type="checkbox" id="workflowNotifications"><i></i></label><label><span><strong>Document Processing</strong><small>Upload and processing updates</small></span><input type="checkbox" id="documentNotifications"><i></i></label></div><button class="btn btn-primary rounded-pill mt-4" id="saveNotifications"><i class="fas fa-save me-2"></i>Save Notifications</button></section>
+            <section class="settings-section"><div class="settings-section-heading"><span class="settings-icon red"><i class="fas fa-lock"></i></span><div><h3>Account Security</h3><p>Change your password using your current credentials.</p></div></div><form id="passwordForm" class="row g-3"><div class="col-md-4"><label class="form-label">Current Password</label><input type="password" class="form-control" id="currentPassword" required></div><div class="col-md-4"><label class="form-label">New Password</label><input type="password" class="form-control" id="newPassword" minlength="6" required></div><div class="col-md-4"><label class="form-label">Confirm New Password</label><input type="password" class="form-control" id="confirmPassword" minlength="6" required></div><div class="col-12"><button class="btn btn-outline-primary rounded-pill" type="submit"><i class="fas fa-key me-2"></i>Change Password</button></div></form></section>
+            <section class="settings-section admin-settings-section d-none" id="adminSettingsSection"><div class="settings-section-heading"><span class="settings-icon blue"><i class="fas fa-shield-halved"></i></span><div><h3>Administrator Settings</h3><p>Administrator access is protected by the backend.</p></div></div><p class="mb-0 text-muted small">Fixed administrator email: <strong id="adminEmail"></strong>. Use Account Security above to change the administrator password.</p></section>
+            <section class="settings-section danger-section"><div class="settings-section-heading"><span class="settings-icon red"><i class="fas fa-triangle-exclamation"></i></span><div><h3>Danger Zone</h3><p>Deleting your account permanently removes your account and associated data.</p></div></div><button class="btn btn-outline-danger rounded-pill" id="deleteAccount"><i class="fas fa-trash me-2"></i>Delete Account</button></section>
+        </main></div>
+    <!-- Regular User Mobile Sidebar -->
+    <div class="offcanvas offcanvas-start offcanvas-sidebar" tabindex="-1" id="mobileSidebar"><div class="offcanvas-header border-bottom"><h5 class="offcanvas-title fw-bold">IntelliBusiness</h5><button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button></div><div class="offcanvas-body p-0 d-flex flex-column"><div class="sidebar-menu"><a href="dashboard.html" class="sidebar-nav-item"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a><a href="settings.html" class="sidebar-nav-item active"><i class="fas fa-sliders"></i><span>Settings</span></a></div><div class="sidebar-footer"><a href="#" class="sidebar-nav-item text-danger" id="logoutMobile"><i class="fas fa-sign-out-alt text-danger"></i><span>Logout</span></a></div></div></div>
+
+    <!-- Admin Mobile Sidebar (Hidden by default) -->
+    <div class="offcanvas offcanvas-start offcanvas-sidebar d-none" tabindex="-1" id="adminMobileSidebar" aria-labelledby="adminMobileSidebarLabel">
+        <div class="offcanvas-header border-bottom"><h5 class="offcanvas-title fw-bold" id="adminMobileSidebarLabel">Admin Console</h5><button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button></div>
+        <div class="offcanvas-body p-0 d-flex flex-column">
+            <div class="sidebar-menu">
+                <a href="admin-dashboard.html" class="sidebar-nav-item" data-bs-dismiss="offcanvas"><i class="fas fa-chart-pie"></i><span>Overview</span></a>
+                <a href="admin-dashboard.html#automationsSection" class="sidebar-nav-item" data-bs-dismiss="offcanvas"><i class="fas fa-cogs"></i><span>Automations</span></a>
+                <a href="admin-dashboard.html#usersSection" class="sidebar-nav-item" data-bs-dismiss="offcanvas"><i class="fas fa-users"></i><span>Users</span></a>
+                <a href="admin-dashboard.html#analyticsSection" class="sidebar-nav-item" data-bs-dismiss="offcanvas"><i class="fas fa-chart-line"></i><span>Analytics</span></a>
+                <a href="settings.html" class="sidebar-nav-item active" data-bs-dismiss="offcanvas"><i class="fas fa-sliders"></i><span>Settings</span></a>
+            </div>
+            <div class="sidebar-footer">
+                <a href="#" class="sidebar-nav-item text-danger" id="adminLogoutMobile"><i class="fas fa-sign-out-alt text-danger"></i><span>Logout</span></a>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4"><div class="modal-header"><h5 class="modal-title text-danger">Delete Account?</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">This permanently deletes your account and associated documents, chats, emails, workflows, and settings. This action cannot be undone.</div><div class="modal-footer"><button class="btn btn-light rounded-pill" data-bs-dismiss="modal">Cancel</button><button class="btn btn-danger rounded-pill" id="confirmDelete">Delete Permanently</button></div></div></div></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script><script src="js/settings.js?v=20260825-2"></script>
+</body></html>

@@ -68,6 +68,24 @@ def upload_and_analyze_business_data(
     db.commit()
     db.refresh(dataset)
 
+    # Let workflows consume the exact analysis generated for this upload.
+    try:
+        from ..services.workflow_service import workflow_engine_service
+        workflow_engine_service.trigger_event(
+            user_id=current_user.id,
+            trigger_type="document_uploaded",
+            payload={
+                "document_id": dataset.id,
+                "original_filename": original_name,
+                "file_path": str(file_path),
+                "file_type": ext.replace(".", ""),
+                "business_analysis": analysis_result,
+            },
+            db=db,
+        )
+    except Exception as exc:
+        print(f"[BusinessAnalyticsUpload] Workflow trigger error: {exc}")
+
     return {
         "id": dataset.id,
         "filename": original_name,
@@ -153,9 +171,10 @@ def ask_question_about_dataset(
 
     dataset_info = {
         "filename": dataset.original_filename,
+        "file_path": dataset.file_path,
+        "file_type": dataset.file_type,
         "key_stats": dataset.extracted_summary or {},
         "insights": dataset.insights or [],
-        "data_context": f"File: {dataset.original_filename}\nStats: {dataset.extracted_summary}",
     }
 
     answer = business_analytics_service.answer_data_question(dataset_info, req.question.strip())
@@ -187,6 +206,7 @@ def download_pdf_report(
         "filename": dataset.original_filename,
         "key_stats": dataset.extracted_summary or {},
         "insights": dataset.insights or [],
+        "charts_config": dataset.charts_config or [],
     }
 
     try:

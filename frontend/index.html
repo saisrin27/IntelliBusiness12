@@ -30,7 +30,7 @@
         <div class="container-fluid container-lg">
             <!-- Logo -->
             <a class="navbar-brand" href="#home">
-                <i class="fas fa-brain"></i> IntelliBusiness
+                <img class="brand-logo-image" src="assets/images/intellibusiness-logo.svg" alt="IntelliBusiness"> IntelliBusiness
             </a>
 
             <!-- Hamburger Menu Button -->
@@ -50,18 +50,8 @@
                     <li class="nav-item">
                         <a class="nav-link nav-link-custom" href="#how-it-works">How It Works</a>
                     </li>
-                
-                    <li class="nav-item">
-                        <a class="nav-link nav-link-custom" href="#faq">FAQ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link nav-link-custom" href="#contact">Contact</a>
-                    </li>
                 </ul>
                 <div class="navbar-buttons ms-lg-3 mt-3 mt-lg-0">
-                    <button class="btn-dark-mode me-2" id="darkModeToggle" title="Toggle Dark Mode">
-                        <i class="fas fa-moon"></i>
-                    </button>
                     <a href="login.html" class="btn btn-outline-primary me-2 btn-custom">Login</a>
                     <a href="register.html" class="btn btn-primary btn-custom">Get Started</a>
                 </div>
@@ -83,16 +73,16 @@
                     </div>
                     <div class="hero-stats">
                         <div class="stat">
-                            <h3>10K+</h3>
-                            <p>Active Users</p>
+                            <h3 id="registeredUsers">-</h3>
+                            <p>Registered Users</p>
                         </div>
                         <div class="stat">
-                            <h3>500K+</h3>
-                            <p>Documents Processed</p>
+                            <h3 id="uploadedDocuments">-</h3>
+                            <p>Documents Uploaded</p>
                         </div>
                         <div class="stat">
-                            <h3>99.9%</h3>
-                            <p>Uptime</p>
+                            <h3 id="apiUptime">-</h3>
+                            <p>API Uptime</p>
                         </div>
                     </div>
                 </div>
@@ -233,7 +223,7 @@
                         <div class="step">
                             <div class="step-number">2</div>
                             <div class="step-icon">
-                                <i class="fas fa-brain"></i>
+                                <img class="brand-logo-image" src="assets/images/intellibusiness-logo.svg" alt="IntelliBusiness">
                             </div>
                             <h3>AI Understands Your Data</h3>
                             <p>Our AI analyzes and understands the context of your business data.</p>
@@ -351,152 +341,6 @@
         </div>
     </section>
 
-    
-
-    <!-- FAQ Section -->
-    <section id="faq" class="faq-section">
-        <div class="container-lg">
-            <div class="section-header text-center">
-                <h2>Frequently Asked Questions</h2>
-                <p>Find answers to common questions</p>
-            </div>
-            <div class="row">
-                <div class="col-lg-8 mx-auto">
-                    <div class="accordion" id="faqAccordion">
-                        <!-- FAQ 1 -->
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                                    <i class="fas fa-question-circle"></i> What is IntelliBusiness?
-                                </button>
-                            </h2>
-                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    IntelliBusiness is an AI-powered platform that helps businesses streamline their operations through intelligent document processing, email generation, analytics, and workflow automation.
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- FAQ 2 -->
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                                    <i class="fas fa-question-circle"></i> How secure is my data?
-                                </button>
-                            </h2>
-                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    We use enterprise-grade encryption, regular security audits, and comply with international security standards including GDPR and SOC 2. Your data is your property.
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- FAQ 3 -->
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-                                    <i class="fas fa-question-circle"></i> Can I integrate IntelliBusiness with my tools?
-                                </button>
-                            </h2>
-                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    Yes! We offer integrations with popular tools like Slack, Microsoft Teams, Zapier, and more. Enterprise users can request custom integrations.
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- FAQ 4 -->
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
-                                    <i class="fas fa-question-circle"></i> What file formats are supported?
-                                </button>
-                            </h2>
-                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    We support PDF, Word documents, Excel spreadsheets, PowerPoint presentations, and plain text files. More formats are added regularly.
-                                </div>
-                            </div>
-                        </div>
-
-                        
-
-                        <!-- FAQ 6 -->
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
-                                    <i class="fas fa-question-circle"></i> What kind of support do you offer?
-                                </button>
-                            </h2>
-                            <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    We offer 24/7 email support for all plans, priority support for Professional plans, and dedicated account managers for Enterprise customers.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="contact-section">
-        <div class="container-lg">
-            <div class="section-header text-center">
-                <h2>Get In Touch</h2>
-                <p>We'd love to hear from you. Send us a message!</p>
-            </div>
-            <div class="row">
-                <div class="col-lg-8 mx-auto">
-                    <form id="contactForm" class="contact-form">
-                        <div class="row">
-                            <div class="col-md-6 mb-4">
-                                <div class="form-group">
-                                    <label for="name" class="form-label">Full Name *</label>
-                                    <input type="text" class="form-control" id="name" name="name" required>
-                                    <small class="error-message"></small>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <div class="form-group">
-                                    <label for="email" class="form-label">Email Address *</label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
-                                    <small class="error-message"></small>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <div class="form-group">
-                                    <label for="company" class="form-label">Company *</label>
-                                    <input type="text" class="form-control" id="company" name="company" required>
-                                    <small class="error-message"></small>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <div class="form-group">
-                                    <label for="phone" class="form-label">Phone Number</label>
-                                    <input type="tel" class="form-control" id="phone" name="phone">
-                                </div>
-                            </div>
-                            <div class="col-12 mb-4">
-                                <div class="form-group">
-                                    <label for="message" class="form-label">Message *</label>
-                                    <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
-                                    <small class="error-message"></small>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary btn-lg w-100 btn-custom btn-gradient">Send Message</button>
-                                <div class="success-message" style="display: none; margin-top: 1.5rem;">
-                                    <i class="fas fa-check-circle"></i> Thank you! Your message has been sent successfully.
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Footer -->
     <footer class="footer">
@@ -504,7 +348,7 @@
             <div class="row">
                 <!-- Footer Column 1 -->
                 <div class="col-md-3 mb-4 mb-md-0">
-                    <h5><i class="fas fa-brain"></i> IntelliBusiness</h5>
+                    <h5><img class="brand-logo-image" src="assets/images/intellibusiness-logo.svg" alt="IntelliBusiness"> IntelliBusiness</h5>
                     <p>Transform your business operations with AI-powered intelligence.</p>
                     <div class="social-links">
                         <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -539,10 +383,10 @@
                 <div class="col-md-3 mb-4 mb-md-0">
                     <h5>Contact</h5>
                     <ul class="footer-links">
-                        <li><a href="mailto:intellibusiness@gmail.com"><i class="fas fa-envelope"></i> intellibusiness@gmail.com</a></li>
+                        <li><a href="mailto:intellibusiness12@gmail.com"><i class="fas fa-envelope"></i> intellibusiness12@gmail.com</a></li>
                         <li><a href="tel:8220335156"><i class="fas fa-phone"></i> 8220335156 </a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
                     </ul>
                 </div>
             </div>
@@ -554,7 +398,7 @@
                         <p>&copy; 2024 IntelliBusiness. All rights reserved.</p>
                     </div>
                     <div class="col-md-6 text-md-end">
-                        <a href="#">Privacy Policy</a> • <a href="#">Terms of Service</a> • <a href="#">Cookie Settings</a>
+                        <a href="privacy.html">Privacy Policy</a> • <a href="terms.html">Terms of Service</a> • <a href="#">Cookie Settings</a>
                     </div>
                 </div>
             </div>
