@@ -17,6 +17,7 @@ const state = {
         sort: 'newest',
     },
 };
+let uploadLoadingStartedAt = 0;
 
 function ensureAuthenticated() {
     const token = localStorage.getItem('access_token');
@@ -136,6 +137,7 @@ function enqueueFiles(files) {
 
     state.selectedFiles = [...state.selectedFiles, ...valid];
     renderSelectedFiles();
+    showUploadLoading(state.selectedFiles.length);
     uploadDocuments();
 }
 
@@ -176,6 +178,7 @@ async function uploadDocuments() {
     if (!state.selectedFiles.length) return;
 
     const token = localStorage.getItem('access_token');
+    await new Promise((resolve) => requestAnimationFrame(resolve));
     const formData = new FormData();
     state.selectedFiles.forEach((file) => formData.append('files', file));
 
@@ -201,7 +204,40 @@ async function uploadDocuments() {
     } catch (error) {
         console.error(error);
         showToast(error.message || 'Upload failed.');
+    } finally {
+        hideUploadLoading();
     }
+}
+
+function showUploadLoading(fileCount) {
+    const overlay = document.getElementById('uploadLoadingOverlay');
+    const message = document.getElementById('uploadLoadingMessage');
+    if (!overlay) return;
+
+    uploadLoadingStartedAt = Date.now();
+    if (message) {
+        message.textContent = fileCount > 1
+            ? `Please wait while ${fileCount} documents are uploaded and processed.`
+            : 'Please wait while your document is uploaded and processed.';
+    }
+    overlay.classList.add('is-visible');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('upload-in-progress');
+}
+
+async function hideUploadLoading() {
+    const overlay = document.getElementById('uploadLoadingOverlay');
+    if (!overlay) return;
+
+    const elapsed = Date.now() - uploadLoadingStartedAt;
+    const remaining = Math.max(0, 800 - elapsed);
+    if (remaining) {
+        await new Promise((resolve) => setTimeout(resolve, remaining));
+    }
+
+    overlay.classList.remove('is-visible');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('upload-in-progress');
 }
 
 async function loadDocumentStats() {

@@ -188,8 +188,8 @@ body.dark-mode .footer {
 }
 
 .navbar-brand .brand-logo-image {
-    width: 38px;
-    height: 38px;
+    width: 24px;
+    height: 24px;
     object-fit: contain;
 }
 
@@ -748,6 +748,13 @@ body.dark-mode .feature-card p {
     margin: 1rem 0;
 }
 
+.step-icon .brand-logo-image {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    display: inline-block;
+}
+
 .step h3 {
     font-size: 1.2rem;
     font-weight: 700;
@@ -1163,6 +1170,15 @@ body.dark-mode .footer {
     font-weight: 700;
     margin-bottom: 1rem;
     font-size: 1.1rem;
+}
+
+.footer h5 .brand-logo-image {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 0.25rem;
 }
 
 .footer p {

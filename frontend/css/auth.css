@@ -72,8 +72,14 @@
 }
 
 .auth-brand .brand-logo-image {
-    width: 42px;
-    height: 42px;
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}
+
+.register-auth-brand .brand-logo-image {
+    width: 24px;
+    height: 24px;
     object-fit: contain;
 }
 
