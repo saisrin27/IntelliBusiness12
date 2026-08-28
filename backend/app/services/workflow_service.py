@@ -203,7 +203,7 @@ class WorkflowEngineService:
                     context["email_body"] = email_body
                     context["last_output"] = email_body
 
-                    send_res = resend_sender_service.send_email(
+                    send_res = smtp_sender_service.send_email(
                         recipient_email=recipient_email,
                         subject=subject,
                         content=email_body,
