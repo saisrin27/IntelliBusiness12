@@ -291,4 +291,4 @@ class ResendEmailService:
 
 
 email_generator_service = EmailGeneratorService()
-smtp_sender_service =  ResendEmailService()
+resend_email_service = ResendEmailService()
