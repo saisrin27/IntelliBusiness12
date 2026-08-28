@@ -2,7 +2,7 @@
  * IntelliBusiness - SaaS Dashboard Controller (Phase 3)
  */
 
-const API_BASE_URL = 'http://127.0.0.1:8000';
+const API_BASE_URL = "https://intellibusiness-db.onrender.com";
 const INITIAL_ACTIVITY_LIMIT = 4;
 let allDashboardActivities = [];
 let isActivityExpanded = false;
@@ -16,7 +16,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        const user = await fetchUserProfile(token);
+        const storedUser = localStorage.getItem('user');
+
+        if (!storedUser) {
+            throw new Error('User session not found');
+        }
+
+    const user = JSON.parse(storedUser);
         if (user.role === 'admin') {
             window.location.href = 'admin-dashboard.html';
             return;
