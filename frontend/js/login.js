@@ -101,10 +101,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             showSuccess('Login successful! Redirecting to your dashboard...');
 
             setTimeout(() => {
-                window.location.href =
-                data.user.role === 'admin'
-                    ? 'admin-dashboard.html'
-                    : 'dashboard.html';
+                const role = data.user?.role || 'user';
+
+                if (role.toLowerCase() === 'admin') {
+                window.location.href = 'admin-dashboard.html';
+                } else {
+                window.location.href = 'dashboard.html';
+                }
             }, 1000);
 
         } catch (error) {
