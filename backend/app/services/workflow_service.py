@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from ..models import History, User, Workflow, WorkflowRun
 from .business_analytics_service import business_analytics_service
 from .document_processor import extract_text_by_file_type
-from .email_service import resend_email_service
+from .email_service import smtp_sender_service
 from .summarization_service import SummarizationService
 
 

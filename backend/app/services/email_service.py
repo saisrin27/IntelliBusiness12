@@ -292,3 +292,6 @@ class ResendEmailService:
 
 email_generator_service = EmailGeneratorService()
 resend_email_service = ResendEmailService()
+
+# Keep old imports working
+smtp_sender_service = resend_email_service
