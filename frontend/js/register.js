@@ -2,7 +2,7 @@
  * IntelliBusiness - Registration Controller
  */
 
-const API_BASE_URL = 'http://127.0.0.1:8000';
+const API_BASE_URL = "https://intellibusiness-db.onrender.com";
 
 document.addEventListener('DOMContentLoaded', () => {
     const registerForm = document.getElementById('registerForm');
@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Registration error:', error);
-            showError('Unable to connect to backend server. Please make sure the FastAPI server is running on http://127.0.0.1:8000.');
+            showError('Unable to connect to the server. Please try again.');
             setLoading(false);
         }
     });
