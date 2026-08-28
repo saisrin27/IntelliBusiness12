@@ -239,11 +239,10 @@ class SMTPSenderService:
                 msg.attach(attachment)
 
             # Connect and send via SMTP with STARTTLS
-            server = smtplib.SMTP(smtp_host, smtp_port, timeout=15)
+            server = smtplib.SMTP(smtp_host, smtp_port, timeout=30)
             server.ehlo()
-            if smtp_port in [587, 25]:
-                server.starttls()
-                server.ehlo()
+            server.starttls()
+            server.ehlo()
 
             server.login(smtp_username, smtp_password)
             server.sendmail(smtp_from_email, [recipient_email], msg.as_string())
