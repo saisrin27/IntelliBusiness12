@@ -1,11 +1,7 @@
 import json
 import os
 import re
-import smtplib
-from email import encoders
-from email.mime.base import MIMEBase
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+import resend
 from typing import Any, Dict, Optional
 
 from .summarization_service import SummarizationService
@@ -150,26 +146,22 @@ root_dir = Path(__file__).resolve().parent.parent.parent.parent
 dotenv_path = root_dir / ".env"
 
 
-class SMTPSenderService:
-    """Service to send emails securely via one central IntelliBusiness backend SMTP account."""
+class ResendEmailService:
+    """Service to send emails using the Resend API."""
 
     def _get_config(self):
-        """Fetch fresh SMTP configuration from environment variables."""
-        if os.path.exists(dotenv_path):
-            load_dotenv(dotenv_path, override=True)
+        api_key = os.getenv("RESEND_API_KEY", "").strip()
 
-        smtp_host = os.getenv("SMTP_HOST", "smtp.gmail.com").strip()
-        smtp_port = int(os.getenv("SMTP_PORT", "587"))
-        smtp_username = os.getenv("SMTP_USERNAME", "").strip()
-        # Remove spaces in case user pasted a Google App Password like 'abcd efgh ijkl mnop'
-        smtp_password = os.getenv("SMTP_PASSWORD", "").replace(" ", "").strip()
-        smtp_from_email = os.getenv("SMTP_FROM_EMAIL", smtp_username or "intellibusiness@company.com").strip()
-        return smtp_host, smtp_port, smtp_username, smtp_password, smtp_from_email
+        from_email = os.getenv(
+            "RESEND_FROM_EMAIL",
+            "onboarding@resend.dev"
+        ).strip()
 
+        return api_key, from_email
 
     def is_configured(self) -> bool:
-        _, _, username, password, _ = self._get_config()
-        return bool(username and password and username != "your_email@gmail.com")
+        api_key, _ = self._get_config()
+        return bool(api_key)
 
     def send_email(
         self,
@@ -180,104 +172,123 @@ class SMTPSenderService:
         user_name: str = "IntelliBusiness User",
         attachment_path: Optional[str] = None,
     ) -> Dict[str, Any]:
-        """Send email to recipient using the central IntelliBusiness backend SMTP account."""
+
         if not recipient_email or "@" not in recipient_email:
             return {
                 "success": False,
                 "error": "Invalid recipient email address.",
             }
 
-        smtp_host, smtp_port, smtp_username, smtp_password, smtp_from_email = self._get_config()
+        api_key, from_email = self._get_config()
 
-        if not smtp_username or not smtp_password or smtp_username == "your_email@gmail.com":
+        if not api_key:
             return {
                 "success": False,
-                "error": "Backend SMTP is not configured yet. Please set SMTP_USERNAME and SMTP_PASSWORD (Google App Password) in your backend .env file.",
+                "error": "Resend API is not configured. Please add RESEND_API_KEY.",
             }
 
         try:
-            msg = MIMEMultipart("mixed")
-            msg["Subject"] = subject
-            msg["From"] = f"IntelliBusiness Service <{smtp_from_email}>"
-            msg["To"] = f"{recipient_name} <{recipient_email}>" if recipient_name else recipient_email
-            msg["Reply-To"] = smtp_from_email
+            resend.api_key = api_key
 
-            # Attach plain text version
-            text_part = MIMEText(content, "plain", "utf-8")
-            msg.attach(text_part)
+            html_content = (
+                content
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\n\n", "</p><p>")
+                .replace("\n", "<br>")
+            )
 
-            # Convert newlines to HTML paragraphs for clean formatting
-            html_content = content.replace("\n\n", "</p><p>").replace("\n", "<br>")
-            html_body = f"""
-            <html>
-                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333333; max-width: 600px; margin: 0 auto; padding: 20px;">
-                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 24px;">
-                        <p>{html_content}</p>
-                    </div>
-                    <div style="margin-top: 16px; font-size: 12px; color: #64748b; text-align: center;">
-                        Sent via IntelliBusiness AI Email Assistant on behalf of {user_name}
-                    </div>
-                </body>
-            </html>
-            """
-            html_part = MIMEText(html_body, "html", "utf-8")
-            msg.attach(html_part)
+            params = {
+                "from": f"IntelliBusiness <{from_email}>",
+                "to": [recipient_email],
+                "subject": subject,
+                "text": content,
+                "html": f"""
+                <html>
+                    <body style="
+                        font-family: Arial, sans-serif;
+                        line-height: 1.6;
+                        color: #333333;
+                        max-width: 600px;
+                        margin: 0 auto;
+                        padding: 20px;
+                    ">
+                        <div style="
+                            background: #ffffff;
+                            border: 1px solid #e2e8f0;
+                            border-radius: 8px;
+                            padding: 24px;
+                        ">
+                            <p>{html_content}</p>
+                        </div>
+
+                        <div style="
+                            margin-top: 16px;
+                            font-size: 12px;
+                            color: #64748b;
+                            text-align: center;
+                        ">
+                            Sent via IntelliBusiness AI Email Assistant
+                        </div>
+                    </body>
+                </html>
+                """,
+            }
 
             if attachment_path:
                 attachment_file = Path(attachment_path)
+
                 if not attachment_file.is_file():
-                    return {"success": False, "error": "The requested email attachment was not found."}
+                    return {
+                        "success": False,
+                        "error": "The requested email attachment was not found.",
+                    }
+
                 with attachment_file.open("rb") as file_handle:
-                    attachment = MIMEBase("application", "pdf")
-                    attachment.set_payload(file_handle.read())
-                encoders.encode_base64(attachment)
-                attachment.add_header(
-                    "Content-Disposition",
-                    "attachment",
-                    filename=attachment_file.name,
-                )
-                msg.attach(attachment)
+                    params["attachments"] = [
+                        {
+                            "filename": attachment_file.name,
+                            "content": list(file_handle.read()),
+                        }
+                    ]
 
-            # Connect and send via SMTP with STARTTLS
-            server = smtplib.SMTP(smtp_host, smtp_port, timeout=30)
-            server.ehlo()
-            server.starttls()
-            server.ehlo()
+            response = resend.Emails.send(params)
 
-            server.login(smtp_username, smtp_password)
-            server.sendmail(smtp_from_email, [recipient_email], msg.as_string())
-            server.quit()
+            print(f"[Resend] Email sent successfully: {response}")
 
-            return {"success": True, "error": None}
-        except smtplib.SMTPAuthenticationError as exc:
             return {
-                "success": False,
-                "error": "SMTP Authentication Failed (535 Bad Credentials). If using Gmail, you MUST use a 16-character Google App Password (not your normal Gmail password). Enable 2-Step Verification on your Google Account and generate an App Password at https://myaccount.google.com/apppasswords.",
+                "success": True,
+                "error": None,
             }
-        except smtplib.SMTPException as exc:
-            return {
-                "success": False,
-                "error": f"SMTP Server error: {str(exc)}",
-            }
+
         except Exception as exc:
+            print(f"[Resend] Email sending error: {exc}")
+
             return {
                 "success": False,
                 "error": f"Unable to send email: {str(exc)}",
             }
 
-    def send_password_reset_otp(self, recipient_email: str, otp: str) -> Dict[str, Any]:
-        """Send a reset code through the central backend mailbox."""
+    def send_password_reset_otp(
+        self,
+        recipient_email: str,
+        otp: str
+    ) -> Dict[str, Any]:
+
         return self.send_email(
             recipient_email=recipient_email,
             subject="IntelliBusiness Password Reset",
             content=(
-                "Your password reset code is: " + otp +
-                "\n\nThis code will expire in 10 minutes."
+                f"Your password reset code is: {otp}"
+                "\n\n"
+                "This code will expire in 10 minutes."
+                "\n\n"
+                "If you did not request a password reset, please ignore this email."
             ),
             user_name="IntelliBusiness Security",
         )
 
 
-
 email_generator_service = EmailGeneratorService()
-smtp_sender_service = SMTPSenderService()
+smtp_sender_service =  ResendEmailService()
