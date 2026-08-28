@@ -2,7 +2,7 @@
  * IntelliBusiness - Login Controller
  */
 
-const API_BASE_URL = 'http://127.0.0.1:8000';
+const API_BASE_URL = "https://intellibusiness-db.onrender.com";
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Redirect to dashboard if already logged in
@@ -100,19 +100,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             showSuccess('Login successful! Redirecting to your dashboard...');
 
-            const profileResponse = await fetch(`${API_BASE_URL}/api/auth/profile`, {
-                headers: { 'Authorization': `Bearer ${data.access_token}` }
-            });
-            const profile = profileResponse.ok ? await profileResponse.json() : data.user;
-            localStorage.setItem('user', JSON.stringify(profile));
-
             setTimeout(() => {
-                window.location.href = profile.role === 'admin' ? 'admin-dashboard.html' : 'dashboard.html';
+                window.location.href =
+                data.user.role === 'admin'
+                    ? 'admin-dashboard.html'
+                    : 'dashboard.html';
             }, 1000);
 
         } catch (error) {
             console.error('Login error:', error);
-            showError('Unable to connect to backend server. Please make sure the FastAPI server is running on http://127.0.0.1:8000.');
+            showError('Unable to connect to the server. Please try again.');
             setLoading(false);
         }
     });
