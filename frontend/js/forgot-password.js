@@ -1,4 +1,5 @@
-const API_BASE_URL = 'http://127.0.0.1:8000';
+const API_BASE_URL = "https://intellibusiness-db.onrender.com";
+
 const GENERIC_RESET_MESSAGE = 'If an account exists with this email, a reset code has been sent.';
 
 document.addEventListener('DOMContentLoaded', () => {
