@@ -1,0 +1,6 @@
+OrderID,Date,Region,Product,Units,UnitPrice,Total
+1001,2026-01-15,North,Widget A,10,15.00,150.00
+1002,2026-01-16,South,Widget B,5,25.50,127.50
+1003,2026-01-17,East,Widget A,8,15.00,120.00
+1004,2026-01-18,West,Widget C,12,8.00,96.00
+1005,2026-01-19,North,Widget B,3,25.50,76.50
