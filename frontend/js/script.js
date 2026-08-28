@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
 async function initializeHeroStats() {
     for (let attempt = 0; attempt < 3; attempt += 1) {
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/public/stats');
+            const response = await fetch('https://intellibusiness-db.onrender.com/api/public/stats');
             if (!response.ok) {
                 throw new Error('Unable to load public statistics.');
             }
