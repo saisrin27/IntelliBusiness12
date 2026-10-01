@@ -11,7 +11,9 @@ COLLECTION_NAME = "intellibusiness_documents"
 
 class ChromaService:
     def __init__(self, persist_directory: Optional[str] = None):
+        print("CHROMA INITIALIZATION START")
         self.persist_directory = persist_directory or CHROMA_DEFAULT_PERSIST_DIR
+        print(f"CHROMA PERSIST DIRECTORY: {self.persist_directory}")
         self.client = chromadb.Client(Settings(
             persist_directory=self.persist_directory,
             anonymized_telemetry=False,
@@ -20,6 +22,7 @@ class ChromaService:
             name=COLLECTION_NAME,
             metadata={"hnsw:space": "cosine"},
         )
+        print("CHROMA INITIALIZATION COMPLETE")
 
     def add_document_chunks(
         self,

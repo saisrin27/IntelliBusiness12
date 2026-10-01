@@ -8,6 +8,9 @@ from dotenv import load_dotenv
 from sqlalchemy import inspect, text
 from sqlalchemy.orm import Session
 
+print("STARTING APP")
+print("IMPORTS START")
+
 # Ensure root directory and backend directory are in sys.path
 current_dir = Path(__file__).resolve().parent
 backend_dir = current_dir.parent
@@ -20,6 +23,8 @@ for p in [str(root_dir), str(backend_dir)]:
 from .database import engine, Base, get_db
 from .models import Document, User
 from .routers import admin, ai_assistant, analytics, auth, business_analytics, dashboard, documents, emails, settings, workflows
+
+print("IMPORTS COMPLETE")
 
 # Load environment variables
 dotenv_path = root_dir / ".env"
@@ -42,6 +47,7 @@ def ensure_admin_role():
         print(f"Notice: User role schema repair skipped ({e}).")
 
 
+print("DATABASE INITIALIZATION START")
 ensure_admin_role()
 
 server_started_at = time.monotonic()
@@ -58,6 +64,8 @@ try:
     print("Database tables initialized successfully.")
 except Exception as e:
     print(f"Notice: Database table auto-creation skipped or failed ({e}). Run migrations using Alembic.")
+
+print("DATABASE INITIALIZATION COMPLETE")
 
 app = FastAPI(
     title="IntelliBusiness API",
