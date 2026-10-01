@@ -21,3 +21,6 @@ chromadb>=0.4.15
 reportlab>=3.6.12
 email-validator 
 resend
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib

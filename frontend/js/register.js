@@ -2,9 +2,15 @@
  * IntelliBusiness - Registration Controller
  */
 
-const API_BASE_URL = "https://intellibusiness-db.onrender.com";
+const API_BASE_URL = window.INTELLIBUSINESS_API_BASE_URL || (
+    ["localhost", "127.0.0.1"].includes(window.location.hostname)
+        ? "http://127.0.0.1:8000"
+        : "https://intellibusiness-db.onrender.com"
+);
 
 document.addEventListener('DOMContentLoaded', () => {
+    const googleButton = document.getElementById('googleSignInButton');
+    if (googleButton) googleButton.href = `${API_BASE_URL}/api/auth/google`;
     const registerForm = document.getElementById('registerForm');
     const fullNameInput = document.getElementById('fullName');
     const companyNameInput = document.getElementById('companyName');
@@ -21,6 +27,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const alertError = document.getElementById('alertError');
     const alertErrorMessage = document.getElementById('alertErrorMessage');
     const alertSuccess = document.getElementById('alertSuccess');
+
+    googleButton?.addEventListener('click', (event) => {
+        if (!agreeTermsInput.checked) {
+            event.preventDefault();
+            agreeTermsInput.classList.add('is-invalid');
+            alertErrorMessage.textContent = 'Please agree to the Terms of Service and Privacy Policy to continue.';
+            alertError.style.display = 'flex';
+            alertSuccess.style.display = 'none';
+        }
+    });
 
     // Toggle Password Visibility
     togglePasswordBtn.addEventListener('click', () => {
@@ -133,10 +149,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            showSuccess('Account registered successfully! Redirecting to login page...');
+            showSuccess('Account created. Check your email for the verification link before signing in.');
             
             setTimeout(() => {
-                window.location.href = 'login.html';
+                window.location.href = 'login.html?registered=1';
             }, 1500);
 
         } catch (error) {

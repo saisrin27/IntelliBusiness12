@@ -1,6 +1,12 @@
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 from typing import Optional, List
+
+
+def _validate_bcrypt_password_bytes(value: str) -> str:
+    if len(value.encode("utf-8")) > 72:
+        raise ValueError("Password must be no more than 72 UTF-8 bytes.")
+    return value
 
 
 class UserRegister(BaseModel):
@@ -8,6 +14,11 @@ class UserRegister(BaseModel):
     company_name: str = Field(..., min_length=2, max_length=255, example="Acme Corp")
     email: EmailStr = Field(..., example="jane.doe@example.com")
     password: str = Field(..., min_length=6, max_length=128, example="Secret123!")
+
+    @field_validator("password")
+    @classmethod
+    def validate_password_bytes(cls, value: str) -> str:
+        return _validate_bcrypt_password_bytes(value)
 
 
 class UserLogin(BaseModel):
@@ -19,6 +30,10 @@ class ForgotPasswordRequest(BaseModel):
     email: EmailStr = Field(..., example="jane.doe@example.com")
 
 
+class EmailVerificationRequest(BaseModel):
+    token: str = Field(..., min_length=32, max_length=256)
+
+
 class VerifyResetOtpRequest(BaseModel):
     email: EmailStr
     otp: str = Field(..., min_length=6, max_length=6, pattern=r"^\d{6}$")
@@ -28,6 +43,11 @@ class ResetPasswordRequest(BaseModel):
     reset_token: str = Field(..., min_length=20)
     new_password: str = Field(..., min_length=6, max_length=128)
     confirm_password: str = Field(..., min_length=6, max_length=128)
+
+    @field_validator("new_password", "confirm_password")
+    @classmethod
+    def validate_password_bytes(cls, value: str) -> str:
+        return _validate_bcrypt_password_bytes(value)
 
 
 class ResetOtpResponse(BaseModel):
@@ -97,6 +117,11 @@ class ChangePasswordRequest(BaseModel):
     current_password: str = Field(..., min_length=1)
     new_password: str = Field(..., min_length=6, max_length=128)
     confirm_password: str = Field(..., min_length=6, max_length=128)
+
+    @field_validator("new_password", "confirm_password")
+    @classmethod
+    def validate_password_bytes(cls, value: str) -> str:
+        return _validate_bcrypt_password_bytes(value)
 
 
 # ============================================

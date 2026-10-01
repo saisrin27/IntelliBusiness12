@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey, JSON, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey, JSON, Boolean, Index
 
 from sqlalchemy.orm import relationship
 from .database import Base
@@ -12,7 +12,9 @@ class User(Base):
     full_name = Column(String(255), nullable=False)
     company_name = Column(String(255), nullable=False)
     email = Column(String(191), unique=True, index=True, nullable=False)
-    password_hash = Column(String(255), nullable=False)
+    password_hash = Column(String(255), nullable=True)
+    google_sub = Column(String(191), nullable=True)
+    email_verified = Column(Boolean, nullable=False, default=True, server_default="1")
     role = Column(String(50), default="user", nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
@@ -27,7 +29,10 @@ class User(Base):
     analytics = relationship("Analytics", back_populates="owner", cascade="all, delete-orphan")
     history_items = relationship("History", back_populates="owner", cascade="all, delete-orphan")
     password_reset_tokens = relationship("PasswordResetToken", back_populates="owner", cascade="all, delete-orphan")
+    email_verification_tokens = relationship("EmailVerificationToken", back_populates="owner", cascade="all, delete-orphan")
     settings = relationship("UserSettings", back_populates="owner", uselist=False, cascade="all, delete-orphan")
+
+    __table_args__ = (Index("uq_users_google_sub", "google_sub", unique=True),)
 
     def __repr__(self):
         return f"<User(id={self.id}, email='{self.email}', role='{self.role}')>"
@@ -243,6 +248,19 @@ class PasswordResetToken(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     owner = relationship("User", back_populates="password_reset_tokens")
+
+
+class EmailVerificationToken(Base):
+    __tablename__ = "email_verification_tokens"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    token_hash = Column(String(64), nullable=False, unique=True)
+    expires_at = Column(DateTime, nullable=False, index=True)
+    used = Column(Boolean, nullable=False, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    owner = relationship("User", back_populates="email_verification_tokens")
 
 
 class UserSettings(Base):

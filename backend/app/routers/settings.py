@@ -1,5 +1,6 @@
 import base64
 import datetime
+import logging
 import re
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -16,6 +17,7 @@ from ..schemas import (
     SettingsProfileResponse,
     SettingsProfileUpdate,
 )
+from ..services.email_service import smtp_sender_service
 from ..security import hash_password, verify_password
 
 router = APIRouter(prefix="/api/settings", tags=["Settings"])
@@ -111,10 +113,21 @@ def update_password(
 ):
     if request.new_password != request.confirm_password:
         raise HTTPException(status_code=400, detail="New passwords do not match.")
+    if not current_user.password_hash:
+        raise HTTPException(
+            status_code=400,
+            detail="This account uses Google sign-in. Use Google to access your account.",
+        )
     if not verify_password(request.current_password, current_user.password_hash):
         raise HTTPException(status_code=400, detail="Current password is incorrect.")
     current_user.password_hash = hash_password(request.new_password)
     db.commit()
+    try:
+        result = smtp_sender_service.send_password_reset_confirmation(current_user.email)
+        if not result.get("success"):
+            logging.error("Password change confirmation delivery failed for user %s.", current_user.id)
+    except Exception as exc:
+        logging.error("Password change confirmation failed for user %s (%s).", current_user.id, type(exc).__name__)
     return MessageResponse(message="Password changed successfully.")
 
 

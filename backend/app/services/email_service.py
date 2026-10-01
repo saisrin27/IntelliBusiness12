@@ -1,10 +1,12 @@
 import json
+import logging
 import os
 import re
 import resend
 from typing import Any, Dict, Optional
 
 from .summarization_service import SummarizationService
+from .email_templates import render_email_template
 
 
 class EmailGeneratorService:
@@ -147,21 +149,21 @@ dotenv_path = root_dir / ".env"
 
 
 class ResendEmailService:
-    """Service to send emails using the Resend API."""
+    """Central email sender backed by the Resend production API."""
 
     def _get_config(self):
         api_key = os.getenv("RESEND_API_KEY", "").strip()
-
-        from_email = os.getenv(
-            "RESEND_FROM_EMAIL",
-            "onboarding@resend.dev"
+        from_email = (
+            os.getenv("RESEND_FROM_EMAIL")
+            or os.getenv("MAIL_FROM")
+            or os.getenv("SMTP_FROM_EMAIL", "")
         ).strip()
-
-        return api_key, from_email
+        from_name = os.getenv("MAIL_FROM_NAME", "IntelliBusiness").strip()
+        return api_key, from_email, from_name
 
     def is_configured(self) -> bool:
-        api_key, _ = self._get_config()
-        return bool(api_key)
+        api_key, from_email, _ = self._get_config()
+        return bool(api_key and from_email)
 
     def send_email(
         self,
@@ -171,74 +173,31 @@ class ResendEmailService:
         recipient_name: Optional[str] = "",
         user_name: str = "IntelliBusiness User",
         attachment_path: Optional[str] = None,
+        html_content: Optional[str] = None,
     ) -> Dict[str, Any]:
-
         if not recipient_email or "@" not in recipient_email:
-            return {
-                "success": False,
-                "error": "Invalid recipient email address.",
-            }
+            return {"success": False, "error": "Invalid recipient email address."}
 
-        api_key, from_email = self._get_config()
-
-        if not api_key:
-            return {
-                "success": False,
-                "error": "Resend API is not configured. Please add RESEND_API_KEY.",
-            }
+        api_key, from_email, from_name = self._get_config()
+        if not api_key or not from_email:
+            logging.error("Email delivery is not configured.")
+            return {"success": False, "error": "Email delivery is not configured."}
 
         try:
             resend.api_key = api_key
-
-            html_content = (
-                content
-                .replace("&", "&amp;")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;")
-                .replace("\n\n", "</p><p>")
-                .replace("\n", "<br>")
-            )
-
             params = {
-                "from": f"IntelliBusiness <{from_email}>",
+                "from": f"{from_name} <{from_email}>",
                 "to": [recipient_email],
                 "subject": subject,
                 "text": content,
-                "html": f"""
-                <html>
-                    <body style="
-                        font-family: Arial, sans-serif;
-                        line-height: 1.6;
-                        color: #333333;
-                        max-width: 600px;
-                        margin: 0 auto;
-                        padding: 20px;
-                    ">
-                        <div style="
-                            background: #ffffff;
-                            border: 1px solid #e2e8f0;
-                            border-radius: 8px;
-                            padding: 24px;
-                        ">
-                            <p>{html_content}</p>
-                        </div>
-
-                        <div style="
-                            margin-top: 16px;
-                            font-size: 12px;
-                            color: #64748b;
-                            text-align: center;
-                        ">
-                            Sent via IntelliBusiness AI Email Assistant
-                        </div>
-                    </body>
-                </html>
-                """,
+                "html": html_content or render_email_template(
+                    title=subject,
+                    paragraphs=content.split("\n\n") or [content],
+                ),
             }
 
             if attachment_path:
                 attachment_file = Path(attachment_path)
-
                 if not attachment_file.is_file():
                     return {
                         "success": False,
@@ -247,46 +206,97 @@ class ResendEmailService:
 
                 with attachment_file.open("rb") as file_handle:
                     params["attachments"] = [
-                        {
-                            "filename": attachment_file.name,
-                            "content": list(file_handle.read()),
-                        }
+                        {"filename": attachment_file.name, "content": list(file_handle.read())}
                     ]
 
-            response = resend.Emails.send(params)
-
-            print(f"[Resend] Email sent successfully: {response}")
-
-            return {
-                "success": True,
-                "error": None,
-            }
-
+            resend.Emails.send(params)
+            logging.info("Email accepted by provider for delivery.")
+            return {"success": True, "error": None}
         except Exception as exc:
-            print(f"[Resend] Email sending error: {exc}")
-
+            logging.error("Email provider request failed (%s).", type(exc).__name__)
             return {
                 "success": False,
-                "error": f"Unable to send email: {str(exc)}",
+                "error": "Email delivery failed. Please try again later.",
             }
+
+    def send_verification_email(
+        self,
+        recipient_email: str,
+        verification_url: str,
+    ) -> Dict[str, Any]:
+        subject = "Verify your IntelliBusiness email"
+        content = (
+            "Verify your email address using the link below. The link expires in 24 hours.\n\n"
+            f"{verification_url}\n\n"
+            "If you did not create this account, you can ignore this message."
+        )
+        return self.send_email(
+            recipient_email=recipient_email,
+            subject=subject,
+            content=content,
+            user_name="IntelliBusiness Security",
+            html_content=render_email_template(
+                title=subject,
+                paragraphs=["Verify your email address to finish creating your account."],
+                action_label="Verify email",
+                action_url=verification_url,
+                security_notice="This link expires in 24 hours. If you did not create this account, ignore this email.",
+            ),
+        )
+
+    def send_email_verified_confirmation(self, recipient_email: str) -> Dict[str, Any]:
+        subject = "Your IntelliBusiness email is verified"
+        content = "Your email address has been verified. You can now sign in to IntelliBusiness."
+        return self.send_email(
+            recipient_email=recipient_email,
+            subject=subject,
+            content=content,
+            user_name="IntelliBusiness Security",
+            html_content=render_email_template(
+                title=subject,
+                paragraphs=["Your email address has been verified. You can now sign in to IntelliBusiness."],
+            ),
+        )
 
     def send_password_reset_otp(
         self,
         recipient_email: str,
-        otp: str
+        otp: str,
     ) -> Dict[str, Any]:
-
+        subject = "Your IntelliBusiness password reset code"
+        content = (
+            f"Your password reset code is {otp}. It expires in 10 minutes.\n\n"
+            "If you did not request a password reset, ignore this email."
+        )
         return self.send_email(
             recipient_email=recipient_email,
-            subject="IntelliBusiness Password Reset",
-            content=(
-                f"Your password reset code is: {otp}"
-                "\n\n"
-                "This code will expire in 10 minutes."
-                "\n\n"
-                "If you did not request a password reset, please ignore this email."
-            ),
+            subject=subject,
+            content=content,
             user_name="IntelliBusiness Security",
+            html_content=render_email_template(
+                title=subject,
+                paragraphs=["Use this one-time code to reset your password."],
+                code=otp,
+                security_notice="The code expires in 10 minutes. If you did not request this, ignore this email.",
+            ),
+        )
+
+    def send_password_reset_confirmation(self, recipient_email: str) -> Dict[str, Any]:
+        subject = "Your IntelliBusiness password was changed"
+        content = (
+            "Your IntelliBusiness password was changed successfully.\n\n"
+            "If you did not make this change, contact support immediately."
+        )
+        return self.send_email(
+            recipient_email=recipient_email,
+            subject=subject,
+            content=content,
+            user_name="IntelliBusiness Security",
+            html_content=render_email_template(
+                title=subject,
+                paragraphs=["Your IntelliBusiness password was changed successfully."],
+                security_notice="If you did not make this change, contact support immediately.",
+            ),
         )
 
 

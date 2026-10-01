@@ -1,4 +1,6 @@
 .env
+backend/credentials*.json
+backend/token*.json
 uploads/
 chroma_db/
 __pycache__/

@@ -2,12 +2,21 @@
  * IntelliBusiness - Login Controller
  */
 
-const API_BASE_URL = "https://intellibusiness-db.onrender.com";
+const API_BASE_URL = window.INTELLIBUSINESS_API_BASE_URL || (
+    ["localhost", "127.0.0.1"].includes(window.location.hostname)
+        ? "http://127.0.0.1:8000"
+        : "https://intellibusiness-db.onrender.com"
+);
 
 document.addEventListener('DOMContentLoaded', async () => {
+    const googleButton = document.getElementById('googleSignInButton');
+    if (googleButton) googleButton.href = `${API_BASE_URL}/api/auth/google`;
+    const googleError = new URLSearchParams(window.location.search).get('google_error');
+    const registrationComplete = new URLSearchParams(window.location.search).get('registered');
+
     // Redirect to dashboard if already logged in
     const existingToken = localStorage.getItem('access_token');
-    if (existingToken) {
+    if (existingToken && !googleError && !registrationComplete) {
         try {
             const profileResponse = await fetch(`${API_BASE_URL}/api/auth/profile`, {
                 headers: { 'Authorization': `Bearer ${existingToken}` }
@@ -35,6 +44,48 @@ document.addEventListener('DOMContentLoaded', async () => {
     const alertError = document.getElementById('alertError');
     const alertErrorMessage = document.getElementById('alertErrorMessage');
     const alertSuccess = document.getElementById('alertSuccess');
+    const resendVerificationPanel = document.getElementById('resendVerificationPanel');
+    const resendVerificationButton = document.getElementById('resendVerificationButton');
+
+    const googleErrorMessages = {
+        cancelled: 'Google sign-in was cancelled.',
+        state: 'Google sign-in could not be verified. Please try again.',
+        unverified: 'Google did not confirm a verified email address.',
+        verification_required: 'Verify your existing account email before using Google sign-in.',
+        account_conflict: 'This Google account is linked to a different IntelliBusiness account.',
+        failed: 'Google sign-in failed. Please try again.',
+    };
+    if (googleError) {
+        console.error('Google OAuth error reported by backend:', googleError);
+        showError(googleErrorMessages[googleError] || googleErrorMessages.failed);
+    }
+    if (registrationComplete) showSuccess('Account created. Check your email for the verification link before signing in.');
+    if (googleError || registrationComplete) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    resendVerificationButton?.addEventListener('click', async () => {
+        const email = emailInput.value.trim();
+        if (!validateEmail(email)) {
+            emailInput.classList.add('is-invalid');
+            return;
+        }
+        resendVerificationButton.disabled = true;
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/auth/resend-verification`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.detail || 'Unable to resend the verification email.');
+            showSuccess(data.message);
+        } catch (error) {
+            showError(error.message);
+        } finally {
+            resendVerificationButton.disabled = false;
+        }
+    });
 
     // Toggle Password Visibility
     togglePasswordBtn.addEventListener('click', () => {
@@ -90,6 +141,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (!response.ok) {
                 const errorDetail = data.detail || 'Login failed. Please check your credentials.';
                 showError(errorDetail);
+                if (response.status === 403) resendVerificationPanel?.classList.remove('d-none');
                 setLoading(false);
                 return;
             }

@@ -24,7 +24,7 @@ from .routers import admin, ai_assistant, analytics, auth, business_analytics, d
 # Load environment variables
 dotenv_path = root_dir / ".env"
 if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path, override=True)
+    load_dotenv(dotenv_path)
 
 # Ensure existing installations have the role field and fixed admin role.
 def ensure_admin_role():
@@ -66,10 +66,14 @@ app = FastAPI(
 )
 
 # CORS configuration
-cors_origins_str = os.getenv("CORS_ORIGINS", "http://127.0.0.1:3000,http://localhost:3000")
-origins = [origin.strip() for origin in cors_origins_str.split(",") if origin.strip()]
-if not origins:
-    origins = ["http://127.0.0.1:3000", "http://localhost:3000"]
+default_cors_origins = (
+    "http://127.0.0.1:3000,http://localhost:3000,"
+    "https://intelli-business12.vercel.app"
+)
+cors_origins_str = os.getenv("CORS_ORIGINS", default_cors_origins)
+origins = [origin.strip().rstrip("/") for origin in cors_origins_str.split(",") if origin.strip()]
+if not origins or "*" in origins:
+    raise RuntimeError("CORS_ORIGINS must contain explicit frontend origins; wildcard origins are not allowed.")
 
 app.add_middleware(
     CORSMiddleware,

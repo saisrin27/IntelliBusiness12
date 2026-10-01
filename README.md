@@ -81,7 +81,7 @@ DATABASE_URL=mysql+pymysql://root:@localhost:3306/intellibusiness
 SECRET_KEY=replace_this_with_a_strong_secret_key
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=1440
-CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+CORS_ORIGINS=http://127.0.0.1:3000,http://localhost:3000,https://intelli-business12.vercel.app
 ```
 
 Important:
@@ -104,7 +104,7 @@ pip install -r backend/requirements.txt
 4. Start the API:
 
 ```bash
-uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000
+uvicorn backend.app.main:app --reload --no-access-log --host 127.0.0.1 --port 8000
 ```
 
 5. Verify the API is running at:
@@ -129,6 +129,38 @@ Then visit:
 ```text
 http://localhost:3000
 ```
+
+---
+
+## Production deployment
+
+### Render backend
+
+Use the repository root as the Render service root. Set the build command to:
+
+```bash
+pip install -r backend/requirements.txt
+```
+
+Set the start command to:
+
+```bash
+uvicorn backend.app.main:app --no-access-log --host 0.0.0.0 --port $PORT
+```
+
+Run `python -m alembic -c backend/alembic.ini upgrade head` as the deployment pre-deploy/release command after configuring `DATABASE_URL`. Configure `SECRET_KEY`, `DATABASE_URL`, `CORS_ORIGINS`, `FRONTEND_BASE_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`, `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `MAIL_FROM_NAME`, `GEMINI_API_KEY`, and `AI_API_KEY` as Render environment variables. Never put these values in the repository.
+
+### Vercel frontend
+
+Set the Vercel project root directory to `frontend/` and deploy as a static site without a build command. The browser client selects localhost for local pages and the Render API for the deployed Vercel hostname; no secret or backend credential belongs in Vercel frontend code.
+
+Register this exact production Google redirect URI in Google Cloud Console:
+
+```text
+https://intellibusiness-db.onrender.com/api/auth/google/callback
+```
+
+For local development, set `GOOGLE_REDIRECT_URI=http://127.0.0.1:8000/api/auth/google/callback` and `FRONTEND_BASE_URL=http://127.0.0.1:3000`. The local redirect URI must also be registered in Google Cloud Console.
 
 ---
 

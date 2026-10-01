@@ -20,7 +20,9 @@ dotenv_path = root_dir / ".env"
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
 
-SECRET_KEY = os.getenv("SECRET_KEY", "intellibusiness_super_secret_jwt_key_2026_change_in_production")
+SECRET_KEY = os.getenv("SECRET_KEY", "").strip()
+if not SECRET_KEY:
+    raise RuntimeError("SECRET_KEY must be configured before starting the API.")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "1440"))
 
