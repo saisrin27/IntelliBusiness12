@@ -403,16 +403,17 @@ def google_auth_callback(request: Request, db: Session = Depends(get_db)):
             return _google_result_redirect("unverified")
 
         user = db.query(User).filter(User.google_sub == google_sub).first()
-        is_new_user = user is None
+        is_new_user = False
         if user is None:
             user = db.query(User).filter(User.email == email).first()
-        if user is not None:
-            if user.email != email or (user.google_sub and user.google_sub != google_sub):
+            if user is not None and user.google_sub and user.google_sub != google_sub:
                 return _google_result_redirect("account_conflict")
-            if not user.email_verified:
-                return _google_result_redirect("verification_required")
+            if user is None:
+                is_new_user = True
+        if user is not None:
             if not user.google_sub:
                 user.google_sub = google_sub
+            user.email_verified = True
         else:
             user = User(
                 full_name=(str(identity.get("name") or email.split("@", 1)[0]).strip()[:255]),
@@ -433,12 +434,15 @@ def google_auth_callback(request: Request, db: Session = Depends(get_db)):
             user = db.query(User).filter(
                 (User.google_sub == google_sub) | (User.email == email)
             ).first()
-            if not user or user.email != email or (user.google_sub and user.google_sub != google_sub):
+            if not user or (user.google_sub and user.google_sub != google_sub):
                 return _google_result_redirect("account_conflict")
-            if not user.email_verified:
-                return _google_result_redirect("verification_required")
+            if user.google_sub != google_sub and user.email.strip().lower() != email:
+                return _google_result_redirect("account_conflict")
             if not user.google_sub:
                 user.google_sub = google_sub
+            if not user.email_verified:
+                user.email_verified = True
+            if user.google_sub == google_sub:
                 db.commit()
                 db.refresh(user)
 
