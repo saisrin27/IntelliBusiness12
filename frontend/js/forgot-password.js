@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const forgotForm = document.getElementById('forgotPasswordForm');
     const otpForm = document.getElementById('otpForm');
     const resetForm = document.getElementById('resetPasswordForm');
-    const resendBtn = document.getElementById('resendBtn');
+    const sendAgainBtn = document.getElementById('sendAgainBtn');
     const countdown = document.getElementById('countdown');
     const alertError = document.getElementById('alertError');
     const alertErrorMessage = document.getElementById('alertErrorMessage');
@@ -23,10 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const alertSuccessMessage = document.getElementById('alertSuccessMessage');
     let resetToken = '';
     let countdownTimer;
-    let resendTimer;
+    let sendAgainTimer;
 
     forgotForm.addEventListener('submit', (event) => requestCode(event, '/api/auth/forgot-password'));
-    resendBtn.addEventListener('click', () => requestCode(null, '/api/auth/resend-otp'));
+    sendAgainBtn.addEventListener('click', () => requestCode(null, '/api/auth/send-otp-again'));
     otpForm.addEventListener('submit', verifyCode);
     resetForm.addEventListener('submit', resetPassword);
 
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
             otpStep.style.display = 'block';
             document.getElementById('resetSubtitle').textContent = 'Enter the 6-digit code sent to your email';
             startCountdown(600);
-            startResendCooldown(60);
+            startSendAgainCooldown(60);
         } catch (error) {
             showError(error.message);
         } finally {
@@ -131,18 +131,18 @@ document.addEventListener('DOMContentLoaded', () => {
         countdownTimer = setInterval(update, 1000);
     }
 
-    function startResendCooldown(seconds) {
-        clearInterval(resendTimer);
-        resendBtn.disabled = true;
-        resendBtn.textContent = `Resend code in ${seconds}s`;
-        resendTimer = setInterval(() => {
+    function startSendAgainCooldown(seconds) {
+        clearInterval(sendAgainTimer);
+        sendAgainBtn.disabled = true;
+        sendAgainBtn.textContent = `Send another code in ${seconds}s`;
+        sendAgainTimer = setInterval(() => {
             seconds -= 1;
             if (seconds <= 0) {
-                clearInterval(resendTimer);
-                resendBtn.disabled = false;
-                resendBtn.textContent = 'Resend code';
+                clearInterval(sendAgainTimer);
+                sendAgainBtn.disabled = false;
+                sendAgainBtn.textContent = 'Send another code';
             } else {
-                resendBtn.textContent = `Resend code in ${seconds}s`;
+                sendAgainBtn.textContent = `Send another code in ${seconds}s`;
             }
         }, 1000);
     }

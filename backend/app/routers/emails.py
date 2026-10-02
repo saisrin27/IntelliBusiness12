@@ -13,7 +13,7 @@ from ..schemas import (
     EmailSaveDraftRequest,
     EmailSendRequest,
 )
-from ..services.email_service import email_generator_service, smtp_sender_service
+from ..services.email_service import email_generator_service, email_sender_service
 
 router = APIRouter(prefix="/api/emails", tags=["Email Generator & Sender"])
 
@@ -66,7 +66,7 @@ def improve_email(
 
 
 # ============================================
-# 2. DRAFT & SENDING VIA CENTRAL SMTP
+# 2. DRAFT & SENDING VIA CENTRAL GMAIL API
 # ============================================
 
 @router.post("/draft", response_model=EmailResponse)
@@ -169,13 +169,15 @@ def send_email(
     db.commit()
     db.refresh(email_record)
 
-    # 2. Execute email sending via central backend SMTP account
-    send_result = smtp_sender_service.send_email(
+    # 2. Execute email sending via the central Gmail API sender
+    send_result = email_sender_service.send_email(
         recipient_email=recipient_email,
         subject=req.subject.strip(),
         content=req.content.strip(),
         recipient_name=req.recipient_name.strip() if req.recipient_name else "",
         user_name=user_name,
+        user_id=current_user.id,
+        db=db,
     )
 
     if send_result.get("success"):
@@ -184,7 +186,7 @@ def send_email(
         email_record.error_message = None
     else:
         email_record.status = "failed"
-        email_record.error_message = send_result.get("error", "SMTP send failed.")
+        email_record.error_message = send_result.get("error", "Gmail API send failed.")
 
     db.commit()
     db.refresh(email_record)

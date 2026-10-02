@@ -44,8 +44,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const alertError = document.getElementById('alertError');
     const alertErrorMessage = document.getElementById('alertErrorMessage');
     const alertSuccess = document.getElementById('alertSuccess');
-    const resendVerificationPanel = document.getElementById('resendVerificationPanel');
-    const resendVerificationButton = document.getElementById('resendVerificationButton');
+    const sendVerificationAgainPanel = document.getElementById('sendVerificationAgainPanel');
+    const sendVerificationAgainButton = document.getElementById('sendVerificationAgainButton');
 
     const googleErrorMessages = {
         cancelled: 'Google sign-in was cancelled.',
@@ -64,26 +64,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.history.replaceState({}, document.title, window.location.pathname);
     }
 
-    resendVerificationButton?.addEventListener('click', async () => {
+    sendVerificationAgainButton?.addEventListener('click', async () => {
         const email = emailInput.value.trim();
         if (!validateEmail(email)) {
             emailInput.classList.add('is-invalid');
             return;
         }
-        resendVerificationButton.disabled = true;
+        sendVerificationAgainButton.disabled = true;
         try {
-            const response = await fetch(`${API_BASE_URL}/api/auth/resend-verification`, {
+            const response = await fetch(`${API_BASE_URL}/api/auth/send-verification-again`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email }),
             });
             const data = await response.json();
-            if (!response.ok) throw new Error(data.detail || 'Unable to resend the verification email.');
+            if (!response.ok) throw new Error(data.detail || 'Unable to send another verification email.');
             showSuccess(data.message);
         } catch (error) {
             showError(error.message);
         } finally {
-            resendVerificationButton.disabled = false;
+            sendVerificationAgainButton.disabled = false;
         }
     });
 
@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (!response.ok) {
                 const errorDetail = data.detail || 'Login failed. Please check your credentials.';
                 showError(errorDetail);
-                if (response.status === 403) resendVerificationPanel?.classList.remove('d-none');
+                if (response.status === 403) sendVerificationAgainPanel?.classList.remove('d-none');
                 setLoading(false);
                 return;
             }

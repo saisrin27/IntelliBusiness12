@@ -21,7 +21,7 @@ from ..models import (
 )
 from ..schemas import AdminAutomationResponse, AdminAutomationRunResponse, AdminAutomationTestRequest, AdminAutomationUpdate
 from ..services.admin_automation_service import execute_welcome_automation, get_or_create_welcome_automation, WELCOME_TRIGGER
-from ..services.email_service import smtp_sender_service
+from ..services.email_service import email_sender_service
 
 router = APIRouter(prefix="/api/admin", tags=["Admin Dashboard"])
 
@@ -71,7 +71,7 @@ def test_admin_automation(
     if automation.trigger_type != WELCOME_TRIGGER:
         raise HTTPException(status_code=400, detail="This automation trigger is not available yet.")
 
-    result = smtp_sender_service.send_email(
+    result = email_sender_service.send_email(
         recipient_email=request.recipient_email,
         subject=automation.email_subject,
         content=automation.email_template.replace("{user_name}", current_admin.full_name).replace(
@@ -79,13 +79,15 @@ def test_admin_automation(
         ).replace("{company_name}", current_admin.company_name or ""),
         recipient_name=current_admin.full_name,
         user_name="The IntelliBusiness Team",
+        user_id=current_admin.id,
+        db=db,
     )
     run = AdminAutomationRun(
         automation_id=automation.id,
         triggered_user_id=current_admin.id,
         status="success" if result.get("success") else "failed",
         result="Test email sent successfully." if result.get("success") else "Test email delivery failed.",
-        error_message=None if result.get("success") else result.get("error", "SMTP send failed."),
+        error_message=None if result.get("success") else result.get("error", "Gmail API send failed."),
         created_at=datetime.datetime.utcnow(),
     )
     db.add(run)

@@ -35,7 +35,7 @@ from ..schemas import (
 )
 from ..security import hash_password, verify_password
 from ..auth import SECRET_KEY, create_access_token, decode_access_token, get_current_user
-from ..services.email_service import smtp_sender_service
+from ..services.email_service import email_sender_service
 from ..services.admin_automation_service import execute_welcome_automation
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
@@ -202,7 +202,7 @@ def _issue_email_verification(user: User, db: Session) -> bool:
     db.commit()
 
     verification_url = f"{_frontend_origin()}/verify-email.html#token={quote(token_value, safe='')}"
-    result = smtp_sender_service.send_verification_email(user.email, verification_url)
+    result = email_sender_service.send_verification_email(user.email, verification_url, user_id=user.id, db=db)
     if not result.get("success"):
         logging.error("Verification email delivery failed for user %s.", user.id)
         return False
@@ -481,21 +481,21 @@ def verify_email(request: EmailVerificationRequest, db: Session = Depends(get_db
     db.commit()
 
     try:
-        smtp_sender_service.send_email_verified_confirmation(user.email)
+        email_sender_service.send_email_verified_confirmation(user.email, user_id=user.id, db=db)
     except Exception as exc:
         logging.error("Post-verification notification failed for user %s (%s).", user.id, type(exc).__name__)
     return MessageResponse(message="Email verified. You can now sign in.")
 
 
-@router.post("/resend-verification", response_model=MessageResponse)
-def resend_verification(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
+@router.post("/send-verification-again", response_model=MessageResponse)
+def send_verification_again(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == request.email.strip().lower()).first()
     if user and user.password_hash and not user.email_verified:
         try:
             _issue_email_verification(user, db)
         except Exception as exc:
             db.rollback()
-            logging.error("Verification resend failed for user %s (%s).", user.id, type(exc).__name__)
+            logging.error("Verification email request failed for user %s (%s).", user.id, type(exc).__name__)
     return MessageResponse(
         message=(
             "If a password-based account needs verification, a link has been sent. "
@@ -519,8 +519,8 @@ def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db
     )
 
 
-@router.post("/resend-otp", response_model=MessageResponse)
-def resend_otp(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
+@router.post("/send-otp-again", response_model=MessageResponse)
+def send_otp_again(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
     _issue_reset_otp(request.email, db)
     return MessageResponse(
         message=(
@@ -603,7 +603,7 @@ def reset_password(request: ResetPasswordRequest, db: Session = Depends(get_db))
     reset_token.used = True
     db.commit()
     try:
-        result = smtp_sender_service.send_password_reset_confirmation(user.email)
+        result = email_sender_service.send_password_reset_confirmation(user.email, user_id=user.id, db=db)
         if not result.get("success"):
             logging.error("Password reset confirmation delivery failed for user %s.", user.id)
     except Exception as exc:
@@ -644,7 +644,7 @@ def _issue_reset_otp(email: str, db: Session) -> None:
     db.add(token)
     db.commit()
 
-    result = smtp_sender_service.send_password_reset_otp(user.email, otp)
+    result = email_sender_service.send_password_reset_otp(user.email, otp, user_id=user.id, db=db)
     if not result.get("success"):
         logging.error("Password reset email delivery failed for user %s.", user.id)
 
@@ -682,7 +682,7 @@ def change_password(
     current_user.password_hash = hash_password(request.new_password)
     db.commit()
     try:
-        result = smtp_sender_service.send_password_reset_confirmation(current_user.email)
+        result = email_sender_service.send_password_reset_confirmation(current_user.email, user_id=current_user.id, db=db)
         if not result.get("success"):
             logging.error("Password change confirmation delivery failed for user %s.", current_user.id)
     except Exception as exc:

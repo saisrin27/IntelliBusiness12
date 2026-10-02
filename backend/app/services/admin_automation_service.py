@@ -4,7 +4,7 @@ from typing import Dict, Optional
 from sqlalchemy.orm import Session
 
 from ..models import AdminAutomation, AdminAutomationRun, User
-from .email_service import smtp_sender_service
+from .email_service import email_sender_service
 
 WELCOME_TRIGGER = "new_user_registered"
 DEFAULT_WELCOME_SUBJECT = "Welcome to IntelliBusiness!"
@@ -78,12 +78,14 @@ def execute_welcome_automation(
     db.refresh(run)
 
     try:
-        result = smtp_sender_service.send_email(
+        result = email_sender_service.send_email(
             recipient_email=user.email,
             subject=automation.email_subject,
             content=content,
             recipient_name=user.full_name,
             user_name="The IntelliBusiness Team",
+            user_id=user.id,
+            db=db,
         )
         if result.get("success"):
             run.status = "success"
@@ -92,7 +94,7 @@ def execute_welcome_automation(
         else:
             run.status = "failed"
             run.result = "Welcome email delivery failed."
-            run.error_message = result.get("error", "SMTP send failed.")
+            run.error_message = result.get("error", "Gmail API send failed.")
     except Exception as exc:
         run.status = "failed"
         run.result = "Welcome email delivery failed."

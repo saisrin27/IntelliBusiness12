@@ -17,7 +17,7 @@ from ..schemas import (
     SettingsProfileResponse,
     SettingsProfileUpdate,
 )
-from ..services.email_service import smtp_sender_service
+from ..services.email_service import email_sender_service
 from ..security import hash_password, verify_password
 
 router = APIRouter(prefix="/api/settings", tags=["Settings"])
@@ -123,7 +123,7 @@ def update_password(
     current_user.password_hash = hash_password(request.new_password)
     db.commit()
     try:
-        result = smtp_sender_service.send_password_reset_confirmation(current_user.email)
+        result = email_sender_service.send_password_reset_confirmation(current_user.email, user_id=current_user.id, db=db)
         if not result.get("success"):
             logging.error("Password change confirmation delivery failed for user %s.", current_user.id)
     except Exception as exc:

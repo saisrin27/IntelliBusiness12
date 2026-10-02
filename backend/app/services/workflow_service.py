@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from ..models import History, User, Workflow, WorkflowRun
 from .business_analytics_service import business_analytics_service
 from .document_processor import extract_text_by_file_type
-from .email_service import smtp_sender_service
+from .email_service import email_sender_service
 from .summarization_service import SummarizationService
 
 
@@ -203,12 +203,14 @@ class WorkflowEngineService:
                     context["email_body"] = email_body
                     context["last_output"] = email_body
 
-                    send_res = smtp_sender_service.send_email(
+                    send_res = email_sender_service.send_email(
                         recipient_email=recipient_email,
                         subject=subject,
                         content=email_body,
                         user_name=user_name,
                         attachment_path=report_pdf,
+                        user_id=user.id if user else None,
+                        db=db,
                     )
                     
                     step_output = {
